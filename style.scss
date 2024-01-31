@@ -1,0 +1,273 @@
+@use 'variables' as v;
+
+@font-face {
+    font-family: N27;
+    src: url('./assets/font/N27-Regular.otf');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: N27;
+    src: url('./assets/font/N27-Medium.otf');
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: N27;
+    src: url('./assets/font/N27-Bold.otf');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: N27;
+    src: url('./assets/font/N27-RegularItalic.otf');
+    font-style: italic;
+}
+
+@font-face {
+    font-family: Nanum Pen;
+    src: url('./assets/font/NanumPenScript-Regular.ttf');
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    flex-grow: 1;
+    background: linear-gradient(168deg, #1C1725 0%, #070710 75%);
+    background-color: #1C1725;
+}
+
+* {
+    font-family: N27;
+    line-height: 1.25;
+    text-align: start;
+
+    margin: 0;
+    padding: 0;
+    position: relative;
+
+    -webkit-overflow-scrolling: touch;
+    transition: all 0.2s ease-in-out;
+
+    user-select: none; // chrome and Opera
+    -moz-user-select: none; // Firefox
+    -webkit-text-select: none; // IOS Safari
+    -webkit-user-select: none; // Safari
+}
+
+html,
+body {
+    font-size: 4.1125vw;
+    //font-size: 16px;
+    font-weight: 400;
+    overflow: visible;
+    overflow-x: hidden;
+}
+
+#app,
+body {
+    font-size: 1em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: v.$text-color;
+    box-sizing: border-box;
+    overflow: visible;
+    border-radius: 0;
+}
+
+div {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    //align-items: flex-start;
+    flex-direction: column;
+    border-radius: 0.75em;
+    position: relative;
+
+    &.row {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+}
+
+img {
+    width: 100%;
+    display: inline-block;
+    border-radius: 0.75em;
+}
+
+svg,
+path {
+    aspect-ratio: 1 / 1;
+    display: inline-block;
+    height: 1em;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-size: 1em;
+    font-weight: 400;
+    display: inline-block;
+    line-height: 120%;
+}
+
+p {
+    font-size: 1em;
+}
+
+b {
+    font-weight: bold;
+    display: inline-block;
+}
+
+hr {
+    height: 0;
+    opacity: 0;
+}
+
+h1 {
+    font-size: 1.75em;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 1.25em;
+    font-weight: 500;
+    line-height: 140%;
+}
+
+h3 {
+    font-size: 1.125em;
+    font-weight: 700;
+}
+
+h4 {
+    font-size: 0.875em;
+}
+
+h5 {
+    font-size: 0.75em;
+}
+
+input,
+select {
+    padding: v.$viewport-padding-horizontal;
+    border-radius: 0.75em;
+    border: none;
+    background-color: rgba(v.$text-color, 0.1);
+    color: v.$text-color;
+    font-size: 1.2em;
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
+    appearance: none;
+}
+
+#iframe {
+    overflow: hidden;
+    width: 100%;
+
+    iframe {
+        height: 100%;
+        border: none;
+    }
+}
+
+video {
+    border-radius: 0.75em;
+}
+
+audio {
+    width: 100%;
+    height: calc(v.$content-gap*2);
+}
+
+#note {
+    position: absolute;
+    width: fit-content;
+    align-items: center;
+
+    img {
+        width: 1em;
+        aspect-ratio: 1/1;
+        background: none;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+        font-family: Nanum Pen;
+        line-height: 80%;
+        font-weight: bold;
+    }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}
+
+.fade-enter-active {
+    transition-delay: 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.list-move,
+.list-enter-active {
+    transition: all 0.4s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: scaleY(0);
+}
+
+.list-leave-active {
+    transition: all 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+    position: absolute;
+    opacity: 0;
+}
+
+.done-enter-active {
+    transition: all 0.25s ease-out;
+    transition-delay: 0.1s;
+}
+
+.done-enter-from,
+.done-leave-to {
+    transform: scale(0.85);
+}
+.done-enter-from {
+    opacity: 0;
+}
+
+.done-leave-active {
+    transition: all 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+    position: absolute;
+}
