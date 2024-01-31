@@ -10,7 +10,7 @@
 
     <div id="content">
       <h5>planned for today at {{ time }}:</h5>
-      <BiteCard :remind="true" :content="content" />
+      <BiteCard :remind="true" :static="true" :content="content" />
     </div>
 
     <div class="row" id="actionButtons">
@@ -65,7 +65,8 @@ export default {
       content: null,
       future: null,
       notificationDate: null,
-      newDate: false
+      newDate: false,
+      data: content
     }
   },
 
@@ -101,6 +102,7 @@ export default {
 
   created() {
     this.$emit('showNavbar', false)
+    console.log(this.contentID)
     this.content = this.data[this.contentID]
 
     const notif = this.$store.state.notifs.find(index => index.content === this.contentID)

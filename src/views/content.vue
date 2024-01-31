@@ -76,6 +76,7 @@ export default {
     return {
       content: null,
 
+      data: content,
       component: null,
       contentDone: false,
       currentSlide: 0,
@@ -94,7 +95,7 @@ export default {
 
   methods: {
     returnComponent() {
-      const comp = defineAsyncComponent(() => import(`@/components/content/${this.content._id}/0.vue`))
+      const comp = defineAsyncComponent(() => import(`@/components/content/${this.contentID}/0.vue`))
       return markRaw(comp)
     },
 
@@ -142,7 +143,7 @@ export default {
   },
 
   async created() {
-    this.content = this.data.content[this.contentID]
+    this.content = this.data[this.contentID]
 
     this.$emit('showNavbar', false)
     document.querySelector('meta[name="theme-color"]').setAttribute("content", "#D3CAFA")

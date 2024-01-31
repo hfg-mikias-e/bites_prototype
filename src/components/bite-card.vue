@@ -1,9 +1,9 @@
 <template>
-        <div id="bite-container" class="row" :class="{details: details}" v-if="content">
+        <div id="bite-container" class="row" :class="{details: details, remind: remind}" v-if="content">
             <div id="iconLine" class="row">
                 <h5 v-if="$store.state.saved.includes(contentID) && $store.state.notifs.find(index => index.content === contentID) !== undefined && !$store.state.saved.includes(contentID)" id="saved-date">{{ $store.state.notifs.find(index => index.content === contentID).date }}</h5>
                 <icon v-if="$store.state.faved.includes(contentID)" :icon="heartIcon" @click.stop="$emit('setFav')" />
-                <icon v-if="($store.state.saved.includes(contentID) || !remind) && !$store.state.faved.includes(contentID)" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
+                <icon v-if="$store.state.saved.includes(contentID) && !$store.state.faved.includes(contentID) && !remind" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
             </div>
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
             <div id="information" :class="{ spacing: $store.state.saved.includes(contentID) }">
