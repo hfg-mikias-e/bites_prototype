@@ -1,7 +1,8 @@
 <template>
-  <div id="home" v-if="userData && skills">
+  <div id="home">
+    {{ $store.state }}
     <div class="row">
-      <h1>Hey, {{ userData.name }}!<br />Here are {{ skills.length }} helpful skills
+      <h1>Hey, {{ $store.state.username }}!<br />Here are some helpful skills
         <span id="accent">for you
           <Image src="/img/accents/show.png" />
         </span>
@@ -9,27 +10,10 @@
       <Button icon="fa-regular fa-bell" class="icon" />
     </div>
 
-    <!--
-    <div v-if="due">
-      <BiteCard v-for="skill in due" :key="skill" :content="skill" @click="openContent(skill)" :time="skill.time"
-        class="due" @setBookmark="checkForSave(skill)" />
+    <div>
+      <BiteCard :static="true" v-for="skill in data.filter(index => index.locked_by === undefined)" :key="skill"
+        :content="skill" @click="openContent(skill, false)" @setBookmark="checkForSave(skill)" />
     </div>
--->
-
-    <div v-if="skills">
-      <BiteCard v-for="skill in skills" :key="skill" :content="skill" @click="openContent(skill)" :time="skill.time"
-        @setBookmark="checkForSave(skill)" />
-    </div>
-
-    <!--
-      <Button @click="externalRedirect('https://pomofocus.io/')">TEST</Button>
-      <video controls>
-        <source src="@/assets/media/Massively Transformative Purpose (MTP).mp4" type="video/mp4">
-      </video>
-      <audio controls>
-        <source src="@/assets/media/Die 4-7-8 Atemtechnik Geführte Übung zum Mitmachen.mp3" type="audio/mpeg">
-      </audio>
-      -->
 
     <SlideOut :open="currentContent !== null" :persist="!saveState" ref="slideout" @close-slideout="closeContent">
       <div id="startBite" v-if="currentContent">
@@ -40,7 +24,7 @@
         </template>
 
         <Transition name="fade">
-          <div id="note" v-if="!saveState && !currentContent.saved">
+          <div id="note" v-if="!saveState && !$store.state.saved.includes(data.indexOf(currentContent))">
             <h4>bad timing?</h4>
             <Image src="/img/accents/arrow.png" />
           </div>
@@ -49,14 +33,14 @@
         <BiteCard :details="true" :saved="saveState" :content="currentContent"
           @setBookmark="checkForSave(currentContent)" />
 
-        <template v-if="currentContent.follow_up && !saveState">
+        <template v-if="returnFollowUp() && !saveState">
           <h4>Unlocks the following Sip:</h4>
           <div id="bite-container" class="row follow-up">
-            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + currentContent._id + '.png)' }">
+            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + data.indexOf(currentContent) + '.png)' }">
               <icon icon="lock" />
               <div />
             </div>
-            <h4>{{ returnFollowUp(currentContent) }}</h4>
+            <h4>{{ returnFollowUp().name }}</h4>
             <Image src="/img/sip.svg" />
           </div>
         </template>
@@ -85,6 +69,7 @@ import Notifier from "@/components/notifier.vue"
 import Image from "@/components/image.vue"
 import Button from "@/components/button.vue"
 import axios from 'axios'
+import { content } from '@/assets/data/content.js'
 import { DateTime } from 'luxon'
 
 export default {
@@ -96,11 +81,6 @@ export default {
     Button
   },
 
-  props: {
-    userData: Object,
-    data: Object,
-  },
-
   emits: ["showNavbar"],
 
   data() {
@@ -110,8 +90,8 @@ export default {
       saveState: false,
       future: null,
       notificationDate: null,
-      skills: null,
-      currentTime: null
+      currentTime: null,
+      data: content
     }
   },
 
@@ -126,20 +106,21 @@ export default {
       this.future = time[1]
     },
 
+    /*
     setContent(content) {
-      if (this.userData.active) {
-        const isSaved = this.userData.active.some(index => index === content._id)
+      if (this.$store.state.active) {
+        const isSaved = this.$store.state.active.some(index => index === content._id)
 
         if (isSaved) {
-          if (this.userData.notifs) {
-            const isTimed = this.userData.notifs.some(index => index.content === content._id)
+          if (this.$store.state.notifs) {
+            const isTimed = this.$store.state.notifs.some(index => index.content === content._id)
 
             if (isTimed) {
               return {
                 ...content,
                 category: this.data.categories.find(index => index._id === content.category),
                 saved: isSaved,
-                time: this.returnShownDate(this.userData.notifs.find(index => index.content === content._id).date)
+                time: this.returnShownDate(this.$store.state.notifs.find(index => index.content === content._id).date)
               }
             }
           }
@@ -151,20 +132,17 @@ export default {
         saved: false
       }
     },
+    */
 
     openContent(content, bookmark) {
-      if (bookmark === undefined) {
-        bookmark = false
-      }
-
       // don't open Slideout if bookmarked (when bookmark clicked)
-      if (!bookmark || (bookmark && !content.saved)) {
+      if (!bookmark || (bookmark && !this.$store.state.saved.includes(this.data.indexOf(content)))) {
         this.currentContent = content
         this.$emit("showNavbar", false)
       }
 
       // states which should not change the saveState -> possibly more simple if closeContent doesn't reset saveState ...
-      if (!((bookmark && !this.currentContent) || (!this.saveState && !bookmark) || (this.currentContent && content.saved && !this.saveState))) {
+      if (!((bookmark && !this.currentContent) || (!this.saveState && !bookmark) || (this.currentContent && this.$store.state.saved.includes(content) && !this.saveState))) {
         this.saveState = !this.saveState
       }
     },
@@ -196,12 +174,18 @@ export default {
     },
 
     async createPushNotification() {
-      console.log("create for " + this.currentContent._id)
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/setNotification", { external_id: this.userData.accountID, content: this.currentContent, date: this.notificationDate })
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: { id: this.data.indexOf(this.currentContent), ...this.currentContent }, date: this.notificationDate }).then(async (response) => {
+        if (this.$store.state.notifs.length > 0) {
+          console.log(this.$store.state.notifs, response.data)
+          await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
+        }
+        this.$store.dispatch("setNotification", response.data)
+      })
 
       const notifString = await this.returnTimeString(this.notificationDate)
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.userData.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.$store.state.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
 
+      /*
       // add notification date
       this.skills = this.skills.map(index => {
         if (index._id === this.currentContent._id) {
@@ -213,34 +197,23 @@ export default {
         }
         return index
       })
+      */
 
       this.closeContent()
     },
 
     async changeSaveState(content) {
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/changeBiteState", { userId: this.userData.accountID, state: 'active', biteId: content._id }).then(async () => {
-        this.skills = this.skills.map(index => {
-          if (index._id === content._id) {
-            return {
-              ...index,
-              saved: !index.saved,
-              time: null
-            }
-          }
+      const contentID = this.data.indexOf(content)
 
-          return index
-        })
-
-        if (this.currentContent) {
-          this.currentContent.saved = !this.currentContent.saved
-        }
-      }).catch((error) => {
-        console.error(error)
-      })
+      if (this.$store.state.saved.includes(contentID)) {
+        this.$store.dispatch("removeState", { content: contentID, state: "saved" })
+      } else {
+        this.$store.dispatch("addState", { content: contentID, state: "saved" })
+      }
     },
 
-    returnFollowUp(content) {
-      return this.data.skills.find(index => index._id === content.follow_up).name
+    returnFollowUp() {
+      return this.data.find(index => index.locked_by === this.data.indexOf(this.currentContent))
     }
   },
 
@@ -248,20 +221,6 @@ export default {
     setInterval(() => {
       this.currentTime = DateTime.now()
     }, 100)
-
-
-    this.skills = this.data.skills.filter(index => !index.unlockedBy).map(index => this.setContent(index))
-    if (this.userData.done) {
-      this.skills = this.skills.filter(index => this.userData.done.some(con => con === index._id) === false)
-    }
-
-    /*
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        console.log(position.coords.latitude, position.coords.longitude);
-      });
-    }
-    */
   }
 };
 </script>

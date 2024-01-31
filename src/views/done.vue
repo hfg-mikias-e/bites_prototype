@@ -1,5 +1,5 @@
 <template>
-  <div id="done">
+  <div id="done" v-if="content">
     <template v-if="!done">
       <Transition name="fade">
         <h2 v-if="time === animationDone && !evaluation">Congrats for completing your
@@ -11,7 +11,8 @@
         </h2>
       </Transition>
       <Transition name="fade">
-        <h2 v-if="!mystery && content.follow_up && liked">You've <span id="accent">unlocked</span> a Sip!</h2>
+        <h2 v-if="!mystery && returnFollowUp() !== undefined && liked">You've <span id="accent">unlocked</span> a Sip!
+        </h2>
         <h2 v-else></h2>
       </Transition>
 
@@ -35,7 +36,7 @@
 
 
       <TransitionGroup name="fade">
-        <div id="followUpImage" v-if="evaluation && content.follow_up && time > 1">
+        <div id="followUpImage" v-if="evaluation && returnFollowUp() !== undefined && time > 1">
           <Transition name="fade">
             <h1 v-if="mystery">?</h1>
           </Transition>
@@ -44,14 +45,14 @@
 
         <div v-if="time === animationDone && !evaluation">
           <Transition name="fade">
-            <div id="note" v-if="!contentData.fav">
+            <div id="note" v-if="!$store.state.faved.includes(contentID)">
               <h4>add it to<br />your favorites!</h4>
               <Image src="/img/accents/arrow.png" />
             </div>
           </Transition>
 
           <h3>How did you like this <span v-if="content.practical">Sip</span><span v-else>Bite</span>?</h3>
-          <BiteCard v-if="contentData" :content="contentData" :fav="true" @setFav="favorite" />
+          <BiteCard :content="content" :fav="true" @setFav="favorite" />
           <div class="row actionButtons">
             <Button class="secondary" @click="evaluation = true, liked = false">Not much...</Button>
             <Button class="primary" @click="evaluation = true, liked = true">It was neat!</Button>
@@ -61,29 +62,31 @@
         <div v-if="evaluation" id="bottomBox">
           <div id="dialog">
             <TransitionGroup name="list">
-              <h1 :style="{ opacity: (1 - 0.4 * (time - 1)) }" v-if="liked">Good to know, we will recommend you more <span v-if="content.practical">Sips</span><span v-else>Bites</span>
+              <h1 :style="{ opacity: (1 - 0.4 * (time - 1)) }" v-if="liked">Good to know, we will recommend you more <span
+                  v-if="content.practical">Sips</span><span v-else>Bites</span>
                 like this one!</h1>
               <h1 :style="{ opacity: (1 - 0.4 * (time - 1)) }" v-else>That's unfortunate... we'll try to show more
                 suitable
                 <span v-if="content.practical">Sips</span><span v-else>Bites</span> for you in
-                the future!</h1>
+                the future!
+              </h1>
               <h1 :style="{ opacity: (1 - 0.4 * (time - 2)) }" v-if="time > 1">But wait....</h1>
               <h1 :style="{ opacity: (1 - 0.4 * (time - 3)) }" v-if="time > 2">there is more to explore!</h1>
               <div id="bite-container" class="row details" v-if="time > 3">
                 <div id="image" :style="{ backgroundImage: 'url(/img/content/' + content._id + '.png)' }"></div>
                 <div id="information">
-                  <Badge :area="contentData.category.area">{{ contentData.category.name }}</Badge>
-                  <h3>{{ returnFollowUp(content).name }}</h3>
-                  <h4 v-if="!saved">{{ returnFollowUp(content).description }}</h4>
+                  <Badge :content="content">{{ content.skill }}</Badge>
+                  <h3>{{ returnFollowUp().name }}</h3>
+                  <h4 v-if="!saved">{{ returnFollowUp().description }}</h4>
                 </div>
               </div>
             </TransitionGroup>
           </div>
           <div class="row actionButtons" v-if="time === animationDone">
             <!--<Button class="primary" @click="$router.push('/home')">Back to Home</Button>-->
-            <template v-if="liked && content.follow_up">
+            <template v-if="liked && returnFollowUp() !== undefined">
               <Button class="secondary" @click="later = true" icon="fa-regular fa-bookmark">Later</Button>
-              <Button class="primary" @click="$router.push('/content/' + returnFollowUp(content)._id)">Jump right
+              <Button class="primary" @click="$router.push('/content/' + returnFollowUp()._id)">Jump right
                 in!</Button>
             </template>
             <Button v-else @click="$router.push('/home')" class="primary">Take me back to Home</Button>
@@ -92,14 +95,14 @@
       </TransitionGroup>
 
       <SlideOut :open="later" :persist="!reminder" ref="slideout" @close-slideout="later = false">
-        <div id="startBite" v-if="content.follow_up">
+        <div id="startBite" v-if="returnFollowUp() !== undefined">
           <h2>Set a reminder for this Sip</h2>
 
           <div id="bite-container" class="row saved">
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + content._id + '.png)' }"></div>
             <div>
-              <Badge :area="content.category.area">{{ content.category.name }}</Badge>
-              <h3>{{ content.follow_up.name }}</h3>
+              <Badge :content="content">{{ content.skill }}</Badge>
+              <h3>{{ returnFollowUp().name }}</h3>
               <h4>saved in your library</h4>
             </div>
           </div>
@@ -125,12 +128,13 @@
 </template>
 
 <script>
-import Image from '@/components/image.vue';
-import Button from '@/components/button.vue';
-import Badge from '@/components/badge.vue';
-import BiteCard from '@/components/bite-card.vue';
-import SlideOut from '@/components/slide-out.vue';
-import Notifier from '@/components/notifier.vue';
+import Image from '@/components/image.vue'
+import Button from '@/components/button.vue'
+import Badge from '@/components/badge.vue'
+import BiteCard from '@/components/bite-card.vue'
+import SlideOut from '@/components/slide-out.vue'
+import Notifier from '@/components/notifier.vue'
+import { content } from '@/assets/data/content.js'
 import axios from 'axios';
 
 export default {
@@ -145,57 +149,42 @@ export default {
 
   emits: ["stars"],
 
-  props: {
-    userData: Object,
-    data: Object
-  },
-
   data() {
     return {
       time: 1,
       animationDone: 5,
       content: null,
-      contentData: null,
-      fav: false,
       evaluation: false,
       mystery: true,
       liked: true,
       later: false,
       future: null,
       notificationDate: null,
-      done: false
+      done: false,
+      data: content
     };
   },
 
-  methods: {
-    setContent(content) {
-      if (this.userData.fav) {
-        return {
-          ...content,
-          category: this.data.categories.find(index => index._id === content.category),
-          fav: this.userData.fav.some(index => index === content._id)
-        }
-      } else {
-        return {
-          ...content,
-          category: this.data.categories.find(index => index._id === content.category),
-          fav: false
-        }
-      }
-    },
+  computed: {
+    contentID() {
+      return Number(this.$route.params.content)
+    }
+  },
 
+  methods: {
     async closeContent() {
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/changeBiteState", { userId: this.userData.accountID, state: 'active', biteId: this.content.follow_up.id })
+      this.$store.dispatch("removeSaved", this.contentID)
+
       this.later = false
       this.done = true
     },
 
     async favorite() {
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/changeBiteState", { userId: this.userData.accountID, state: 'fav', biteId: this.content._id }).then(async () => {
-        this.contentData.fav = !this.contentData.fav
-      }).catch((error) => {
-        console.error(error)
-      })
+      if (this.$store.state.faved.includes(this.contentID)) {
+        this.$store.dispatch("removeFaved", this.contentID)
+      } else {
+        this.$store.dispatch("addFaved", this.contentID)
+      }
     },
 
     setTimer(secs) {
@@ -211,8 +200,11 @@ export default {
 
     async createPushNotification() {
       await this.closeContent()
-      console.log("create for " + this.content.follow_up.id)
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/setNotification", { external_id: this.userData.accountID, content: this.returnFollowUp(this.content), date: this.notificationDate })
+
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: {id: this.data.indexOf(this.returnFollowUp()) , ...this.returnFollowUp()}, date: this.notificationDate }).then(async (response) => {
+        await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
+        this.$store.dispatch("setNotification", response.data)
+      })
     },
 
     setTime(time) {
@@ -220,15 +212,15 @@ export default {
       this.future = time[1]
     },
 
-    returnFollowUp(content) {
-      return this.data.skills.find(index => index._id === content.follow_up)
+    returnFollowUp() {
+      return this.data.find(index => index.locked_by === this.contentID)
     }
   },
 
   watch: {
     evaluation(value) {
       if (value) {
-        if (this.liked && this.content.follow_up) {
+        if (this.liked && this.returnFollowUp() !== undefined) {
           this.animationDone = this.animationDone - 1
         } else {
           this.animationDone = 1
@@ -245,14 +237,11 @@ export default {
   },
 
   created() {
-    this.content = this.data.skills.find(index => index._id === this.$route.params.content)
+    this.content = this.data[this.contentID]
+
     this.$emit('showNavbar', false)
     this.$emit("stars", true)
     this.setTimer(800)
-
-    if (this.userData) {
-      this.contentData = this.setContent(this.content)
-    }
   },
 
   beforeUnmount() {
@@ -266,7 +255,6 @@ export default {
 @use "variables" as v;
 
 #done {
-  //height: calc(100% - 2*v.$viewport-padding-vertical);
   height: 100%;
   justify-content: space-between;
   align-items: center;
@@ -368,5 +356,4 @@ h2 {
   #bite-container {
     margin-top: 0.5em;
   }
-}
-</style>
+}</style>

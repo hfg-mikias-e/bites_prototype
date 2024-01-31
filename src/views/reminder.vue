@@ -1,7 +1,7 @@
 <template>
   <div id="reminder" v-if="content">
     <div class="row">
-      <h1>Hey, {{ userData.name }}!<br />It's time for your
+      <h1>Hey, {{ $store.state.username }}!<br />It's time for your
         <span id="accent">planned <span v-if="content.practical">Sip</span><span v-else>Bite</span>!
           <Image src="/img/accents/sparkle.png" />
         </span>
@@ -15,11 +15,11 @@
 
     <div class="row" id="actionButtons">
       <Button class="secondary" @click="newDate = true">Postpone</Button>
-      <Button v-if="content.practical" class="primary" @click="$router.push('/content/' + content._id)">
+      <Button v-if="content.practical" class="primary" @click="$router.push('/content/' + contentID)">
         <Image src="/img/sip.svg" />
         Start the Sip!
       </Button>
-      <Button v-else class="primary" @click="$router.push('/content/' + content._id)">
+      <Button v-else class="primary" @click="$router.push('/content/' + contentID)">
         <Image src="/img/bite.svg" />
         Start the Bite!
       </Button>
@@ -46,6 +46,7 @@ import Notifier from "@/components/notifier.vue"
 import Image from "@/components/image.vue"
 import Button from "@/components/button.vue"
 import axios from 'axios'
+import { content } from '@/assets/data/content.js'
 import { DateTime } from 'luxon'
 
 export default {
@@ -55,11 +56,6 @@ export default {
     BiteCard,
     Image,
     Button
-  },
-
-  props: {
-    userData: Object,
-    data: Object,
   },
 
   emits: ["showNavbar"],
@@ -75,7 +71,6 @@ export default {
 
   methods: {
     setTime(time) {
-      console.log("setTime")
       this.notificationDate = time[0]
       this.future = time[1]
     },
@@ -87,39 +82,32 @@ export default {
 
     async createPushNotification() {
       console.log("create for " + this.content._id)
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/setNotification", { external_id: this.userData.accountID, content: this.content, date: this.notificationDate })
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: {id: this.contentID, ...this.content}, date: this.notificationDate }).then(async (response) => {
+        await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
+        this.$store.dispatch("setNotification", response.data)
+      })
 
       const notifString = await this.returnTimeString(this.notificationDate)
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.userData.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
-
-      this.$router.push('/home')
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.$store.state.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
+      this.$router.push('/')
     }
   },
 
-  /*
-  watch: {
-    userData() {
-      this.getRecentReminder()
+  computed: {
+    contentID() {
+      return Number(this.$route.params.content)
     }
   },
-  */
 
   created() {
     this.$emit('showNavbar', false)
+    this.content = this.data[this.contentID]
 
-    this.content = this.data.skills.find(index => index._id === this.$route.params.content)
-
-    console.log(this.content._id)
-    console.log(this.userData.notifs)
-
-    if (this.userData.notifs) {
-      const notif = this.userData.notifs.find(index => index.content === this.content._id)
-      if (notif !== undefined) {
-        this.time = DateTime.fromISO(notif.date).toFormat('h:mm a')
-        //.setLocale('en-US').toRelativeCalendar()<
-      } else {
-        this.$router.push("/home")
-      }
+    const notif = this.$store.state.notifs.find(index => index.content === this.contentID)
+    if (notif !== undefined) {
+      this.time = DateTime.fromISO(notif.date).toFormat('h:mm a')
+    } else {
+      this.$router.push("/")
     }
   },
 

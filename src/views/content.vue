@@ -1,12 +1,12 @@
 <template>
-  <div v-if="contentData">
+  <div v-if="content">
     <Transition name="fade">
-      <div id="infoCard" v-if="!started" :class="{ bite: !contentData.practical }">
-        <template v-if="!contentData.practical">
+      <div id="infoCard" v-if="!started" :class="{ bite: !content.practical }">
+        <template v-if="!content.practical">
           <Button icon="xmark" @click="$router.go(-1)" class="transparent no-text"/>
           <div>
             <h1>This is a Bite!</h1>
-            <h2>In the following <span v-if="contentData.type === 'book'">slides</span><span v-else-if="contentData.type === 'film'">video</span> of this Bite, you will learn about the theory and basics of this skill.</h2>
+            <h2>In the following <span v-if="content.type === 'book'">slides</span><span v-else-if="content.type === 'film'">video</span> of this Bite, you will learn about the theory and basics of this skill.</h2>
           </div>
           <div id="image">
             <Image src="/img/bite.svg" />
@@ -15,11 +15,11 @@
         <template v-else>
           <div>
             <Button icon="xmark" @click="$router.go(-1)" class="transparent no-text"/>
-            <h1>{{ contentData.name }}</h1>
+            <h1>{{ content.name }}</h1>
           </div>
           <div>
             <h2>Effects</h2>
-            <h3>{{ contentData.effect }}</h3>
+            <h3>{{ content.effect }}</h3>
           </div>
           <div>
             <h2>How it works</h2>
@@ -28,22 +28,22 @@
             </div>
           </div>
         </template>
-        <Button class="ready" v-if="contentData.practical" @click="start">Okay, ready!</Button>
+        <Button class="ready" v-if="content.practical" @click="start">Okay, ready!</Button>
         <Button class="ready" v-else @click="start">Understood!</Button>
       </div>
     </Transition>
 
     <Transition name="fade">
       <ProgressBar :currentSlide="currentSlide" :slideNumber="lastSlide" :contentDone="contentDone"
-        :finished="finished" :quiz="contentData.quiz !== undefined" :content="contentData" />
+        :finished="finished" :quiz="content.quiz !== undefined" :content="content" />
     </Transition>
 
-    <Slides v-if="!contentDone" :content="contentData" :number="currentSlide + 1"
+    <Slides v-if="!contentDone" :content="content" :number="currentSlide + 1"
       @lastSlide="last => lastSlide = last" @currentSlide="current => currentSlide = current"
       @contentDone="completeContent" />
 
     <Transition name="fade">
-      <Quiz v-if="contentDone && contentData.quiz" :questions="contentData.quiz" @quizDone="completeBite"
+      <Quiz v-if="contentDone && content.quiz" :questions="content.quiz" @quizDone="completeBite"
         @finished="fin => finished = fin" />
     </Transition>
   </div>
@@ -53,35 +53,28 @@
 import axios from 'axios'
 import Slides from '@/components/slides.vue'
 import Quiz from '@/components/quiz.vue'
-import Done from '@/components/done.vue'
 import ProgressBar from '@/components/progress-bar.vue'
 import BiteCard from '@/components/bite-card.vue'
 import Button from '@/components/button.vue'
 import Image from '@/components/image.vue'
+import { content } from '@/assets/data/content.js'
 import { defineAsyncComponent, markRaw } from 'vue'
 
 export default {
   components: {
     Slides,
     Quiz,
-    Done,
     ProgressBar,
     Button,
     BiteCard,
     Image
   },
 
-  props: {
-    data: Object,
-    userData: Object
-  },
-
   emits: ['showNavbar', 'stars'],
 
   data() {
     return {
-      user: this.$auth0.user,
-      contentData: null,
+      content: null,
 
       component: null,
       contentDone: false,
@@ -93,16 +86,22 @@ export default {
     }
   },
 
+  computed: {
+    contentID() {
+      return Number(this.$route.params.content)
+    }
+  },
+
   methods: {
     returnComponent() {
-      const comp = defineAsyncComponent(() => import(`@/components/content/${this.contentData._id}/0.vue`))
+      const comp = defineAsyncComponent(() => import(`@/components/content/${this.content._id}/0.vue`))
       return markRaw(comp)
     },
 
     /*
     async completeBite() {
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/changeBiteState", { userId: this.user.sub, state: 'done', biteId: this.contentData._id }).then(async (response) => {
-        this.$router.push('/done/' + this.contentData._id)
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/changeBiteState", { userId: this.user.sub, state: 'done', biteId: this.content._id }).then(async (response) => {
+        this.$router.push('/done/' + this.content._id)
       }).catch((error) => {
         console.error(error)
       })
@@ -112,7 +111,7 @@ export default {
     completeContent() {
       this.contentDone = true
 
-      if (!this.contentData.quiz) {
+      if (!this.content.quiz) {
         this.finished = true
         /*
         setTimeout(() => {
@@ -134,8 +133,6 @@ export default {
 
     touchEnd(touchEvent, posXStart) {
       const posXEnd = touchEvent.changedTouches[0].clientX;
-
-      console.log(posXStart, posXEnd)
       if (posXStart < (posXEnd - 25) && this.currentSlide > 0) {
         this.currentSlide = this.currentSlide - 1
       } else if (posXStart > (posXEnd + 25) && this.currentSlide < this.lastSlide - 1) {
@@ -145,11 +142,12 @@ export default {
   },
 
   async created() {
-    this.contentData = this.data.skills.find(index => index._id === this.$route.params.content)
+    this.content = this.data.content[this.contentID]
+
     this.$emit('showNavbar', false)
     document.querySelector('meta[name="theme-color"]').setAttribute("content", "#D3CAFA")
 
-    if (this.contentData.practical) {
+    if (this.content.practical) {
       this.component = this.returnComponent()
     }
   },

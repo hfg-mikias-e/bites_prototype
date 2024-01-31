@@ -2,26 +2,18 @@
   <Transition name="fade">
     <div id="shadow" v-show="!disabled">
       <div id="navbar" class="row">
-        <router-link class="router" to="/home">
-          <Button :icon="'house'">
-            <p>Home</p>
-          </Button>
-        </router-link>
-        <router-link class="router" to="/bookmark">
-          <Button :icon="'cookie-bite'">
-            <p>Bites</p>
-          </Button>
-        </router-link>
-        <router-link class="router" to="/explore">
-          <Button :icon="'magnifying-glass'">
-            <p>Explore</p>
-          </Button>
-        </router-link>
-        <router-link class="router" to="/profile">
-          <Button :icon="'user'">
-            <p>Profile</p>
-          </Button>
-        </router-link>
+        <Button :icon="'house'">
+          <p>Home</p>
+        </Button>
+        <Button :icon="'cookie-bite'">
+          <p>Bites</p>
+        </Button>
+        <Button :icon="'magnifying-glass'">
+          <p>Explore</p>
+        </Button>
+        <Button :icon="'user'">
+          <p>Profile</p>
+        </Button>
       </div>
     </div>
   </Transition>
@@ -69,38 +61,32 @@ export default {
   backdrop-filter: blur(20px);
   color: v.$text-color;
 
-  .router {
+  button {
     border: none;
     text-decoration: none;
     display: flex;
-
-    button {
-      font-size: 1em;
-      border-radius: 100vw;
-      color: v.$text-color;
-      background: none; //v.$background-color;
-      padding: 0;
-      flex-grow: 1;
-      gap: 0;
-      height: 4em;
-      min-width: 4em;
-
-      p {
-        font-size: 0px;
-      }
-
-      svg,
-      path {
-        transition: all 0.1s;
-        font-size: 1.5em;
-      }
-    }
-  }
-
-  .router-link-active {
+    font-size: 1em;
+    border-radius: 100vw;
+    color: v.$text-color;
+    background: none; //v.$background-color;
+    padding: 0;
     flex-grow: 1;
+    gap: 0;
+    height: 4em;
+    min-width: 4em;
 
-    button {
+    p {
+      font-size: 0px;
+    }
+
+    svg,
+    path {
+      transition: all 0.1s;
+      font-size: 1.5em;
+    }
+
+    &:first-of-type {
+      flex-grow: 1;
       overflow: hidden;
       color: v.$text-color;
       background-color: rgba(v.$background-color, 0.5);
@@ -110,12 +96,6 @@ export default {
         font-size: 1em;
         font-weight: bold;
       }
-    }
-
-    &:focus {
-      flex-grow: 1;
-      color: v.$background-color;
-      background-color: v.$text-color;
     }
   }
 }

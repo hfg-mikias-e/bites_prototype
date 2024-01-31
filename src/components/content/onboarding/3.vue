@@ -1,7 +1,7 @@
 <template>
     <p>But first, tell us your name!</p>
     <input style="flex-grow: unset;" v-model="username"/>
-    <Button class="primary complete" @click="setName">Confirm</Button>
+    <Button class="primary complete" :disabled="username === ''" @click="setName">Confirm</Button>
 </template>
 
 <script>

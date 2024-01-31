@@ -1,20 +1,19 @@
 <template>
-    <Transition name="list">
-        <div id="bite-container" class="row" :class="{ saved: saved, details: details, fav: fav, remind: remind, due: due }" v-if="content">
-            {{  due }}
+        <div id="bite-container" class="row" :class="{details: details}" v-if="content">
             <div id="iconLine" class="row">
-                <h5 v-if="content.saved && content.time && !saved" id="saved-date">{{ content.time }}</h5>
-                <icon v-if="fav" :icon="heartIcon" @click.stop="$emit('setFav')" />
-                <icon v-if="(saved || !remind) && !fav" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
+                <h5 v-if="$store.state.saved.includes(contentID) && $store.state.notifs.find(index => index.content === contentID) !== undefined && !$store.state.saved.includes(contentID)" id="saved-date">{{ $store.state.notifs.find(index => index.content === contentID).date }}</h5>
+                <icon v-if="$store.state.faved.includes(contentID)" :icon="heartIcon" @click.stop="$emit('setFav')" />
+                <icon v-if="($store.state.saved.includes(contentID) || !remind) && !$store.state.faved.includes(contentID)" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
             </div>
-            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + content._id + '.png)' }"></div>
-            <div id="information" :class="{ spacing: saved }">
+            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
+            <div id="information" :class="{ spacing: $store.state.saved.includes(contentID) }">
                 <TransitionGroup name="list">
-                    <Badge v-if="!saved || fav" :area="content.category.area" key="0">{{ content.category.name }}</Badge>
+                    <Badge v-if="static || (!$store.state.saved.includes(contentID) || $store.state.faved.includes(contentID))" :content="content" key="0">{{ content.skill }}</Badge>
                     <h3 key="1">{{ content.name }}</h3>
-                    <h4 key="2" v-if="!saved">{{ content.description }}</h4>
+                    <h4 key="2" v-if="static || !$store.state.saved.includes(contentID)">{{ content.description }}</h4>
                     <h4 key="3" v-else-if="!remind">saved to your library</h4>
-                    <div key="4" class="row" v-if="(!saved && details && !remind) || (remind && !details)" id="content-type">
+                    <div key="4" class="row" v-if="(!$store.state.saved.includes(contentID) && details && !remind) || (remind && !details)"
+                        id="content-type">
                         <icon v-if="content.type" :icon="content.type" />
                         <h4 v-if="content.minutes">{{ content.minutes }} min</h4>
                         <h4 v-else-if="content.tag">{{ content.tag }}</h4>
@@ -22,13 +21,13 @@
                 </TransitionGroup>
             </div>
         </div>
-    </Transition>
 </template>
   
 <script>
 import Image from "@/components/image.vue";
 import Button from "@/components/button.vue";
 import Badge from "@/components/badge.vue";
+import { content, categories } from '@/assets/data/content.js'
 
 export default {
     components: {
@@ -37,32 +36,33 @@ export default {
         Badge
     },
 
+    data() {
+        return {
+            skills: content
+        }
+    },
+
     props: {
         content: Object,
         details: Boolean,
-        saved: Boolean,
-        fav: Boolean,
         remind: Boolean,
-        due: Number
+        due: Number,
+        static: Boolean
     },
-
-    /*
-    data() {
-        return {
-            time: null
-        }
-    },
-    */
 
     emits: ['setBookmark', 'setFav'],
 
     computed: {
         image() {
-            return "/img/content/" + this.content._id + ".png"
+            return "/img/content/" + this.contentID + ".png"
+        },
+
+        contentID() {
+            return this.skills.indexOf(this.content)
         },
 
         bookmarkIcon() {
-            if (this.content && !this.content.saved) {
+            if (this.content && !this.$store.state.saved.includes(this.contentID)) {
                 return "fa-regular fa-bookmark"
             } else {
                 return "bookmark"
@@ -70,7 +70,7 @@ export default {
         },
 
         heartIcon() {
-            if (this.content && this.content.fav) {
+            if (this.content && this.$store.state.faved.includes(this.contentID)) {
                 return "heart"
             } else {
                 return "fa-regular fa-heart"
@@ -81,27 +81,12 @@ export default {
     methods: {
         startContent() {
             if (this.content.practical) {
-                this.$router.push('/sip/' + this.content._id)
+                this.$router.push('/sip/' + this.contentID)
             } else {
-                this.$router.push('/bite/' + this.content._id)
-            }
-        }
-    },
-
-    /*
-    mounted() {
-        if (this.content.time) {
-            const date = DateTime.fromISO(this.content.time)
-            const dayString = date.setLocale('en-US').toRelativeCalendar()
-
-            if (dayString === "today") {
-                this.time = date.toFormat('h:mm a')
-            } else {
-                this.time = dayString.charAt(0).toUpperCase() + dayString.substring(1)
+                this.$router.push('/bite/' + this.contentID)
             }
         }
     }
-    */
 };
 </script>
   
@@ -109,7 +94,7 @@ export default {
 @use "variables" as v;
 
 #bite-container {
-    background-color: rgba(v.$text-color, 0.08);
+    background-color: v.$content-color;
     height: fit-content;
     justify-content: flex-start;
     align-items: flex-start;

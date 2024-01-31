@@ -7,94 +7,68 @@ const vuexLocal = new VuexPersistence({
 
 export default createStore({
   state: {
-    //deviceId: "",
-
+    accountID: "",
     username: "",
-
     subscribed: false,
     firstTimeUse: true,
 
-    /*
-    currentCategory: null,
-    categories: [],
-    skills: [],
-
-    currentBite: null
-    */
+    saved: [],
+    done: [],
+    faved: [],
+    notifs: []
   },
 
   mutations: {
-    /*
-    SET_DEVICE(state, data) {
-      state.deviceId = data;
-    },
-    */
-
     SET_SUBSCRIPTION(state, data) {
       state.subscribed = data;
+    },
+    SET_ID(state, data) {
+      state.accountID = data;
     },
     SET_ONBOARDING(state, data) {
       state.firstTimeUse = data;
     },
-
-    /*
-    STORE_CATEGORIES(state, data) {
-      state.categories = data;
-    },
-    STORE_SKILLS(state, data) {
-      const index = state.skills.findIndex((index) => index.id === data.id);
-      if (index >= 0) {
-        state.skills[index].bites = data.bites;
-      } else {
-        state.skills.push(data);
-      }
-    },
-    STORE_BITE(state, data) {
-      state.currentBite = data;
-    },
-    STORE_CATEGORY(state, data) {
-      state.currentCategory = data;
-    },
-    */
-
     SET_USERNAME(state, data) {
       state.username = data
+    },
+    SET_NOTIF(state, data) {
+      state.notifs = state.notifs.filter(index => index.content !== data.content)
+      state.notifs.push(data)
+    },
+
+    ADD_STATE(state, data) {
+      console.log(data.state)
+      state[data.state].push(data.content)
+    },
+    REM_STATE(state, data) {
+      console.log("REMOVE")
+      state[data.state] = state[data.state].filter(index => index !== data.content)
     }
   },
 
   actions: {
-    /*
-    setDeviceId(state, data) {
-      state.commit("SET_DEVICE", data);
-    },
-    */
-
     setSubscription(state, data) {
       state.commit("SET_SUBSCRIPTION", data);
+    },
+    setID(state, data) {
+      state.commit("SET_ID", data);
     },
     setOnboarding(state, data) {
       state.commit("SET_ONBOARDING", data);
     },
-
-    /*
-    storeCategories(state, data) {
-      state.commit("STORE_CATEGORIES", data);
-    },
-    storeSkills(state, data) {
-      state.commit("STORE_SKILLS", data);
-    },
-
-    storeBite(state, data) {
-      state.commit("STORE_BITE", data);
-    },
-    storeCategory(state, data) {
-      state.commit("STORE_CATEGORY", data);
-    },
-    */
-
     setUsername(state, data) {
       state.commit("SET_USERNAME", data);
     },
+    setNotification(state, data) {
+      state.commit("SET_NOTIF", data);
+    },
+
+    addState(state, data) {
+      state.commit("ADD_STATE", data);
+    },
+    removeState(state, data) {
+      state.commit("REM_STATE", data);
+    }
   },
 
   plugins: [vuexLocal.plugin],

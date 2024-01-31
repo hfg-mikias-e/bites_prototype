@@ -70,7 +70,6 @@ export default {
 
   data() {
     return {
-      user: this.$auth0.user,
       dateFormat: 'MM/dd/yyyy', //'dd.MM.yyyy',
       timeFormat: 'h:mm a', // 'HH:mm'
 

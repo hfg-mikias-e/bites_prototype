@@ -1,15 +1,9 @@
 <template>
-  <Transition name="fade" appear>
-    <h3 v-if="isLoading">Please wait one moment ...</h3>
-  </Transition>
-
   <Transition name="fade">
-    <div id="route" :class="{ navbar: showNavbar, space: stars }" v-if="!isLoading && isAuthenticated && dataLoaded && !$store.state.firstTimeUse">
+    <div id="route" :class="{ navbar: showNavbar, space: stars }" v-if="!$store.state.firstTimeUse">
       <router-view v-slot="{ Component, route }" mode="out-in">
         <transition name="fade">
-          <component :is="Component" :key="route.name" :data="data" :userData="userData"
-            @showNavbar="val => showNavbar = val" @stars="star => stars = star" />
-          <!-- @categoryOpen="isOpen => categoryOpen = isOpen" -->
+          <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val" @stars="star => stars = star" />
         </transition>
       </router-view>
       <Transition name="fade" appear>
@@ -19,11 +13,7 @@
   </Transition>
 
   <Transition name="fade">
-    <Button v-if="$store.state.firstTimeUse && isAuthenticated" @click="completeOnboarding">Proceed</Button>
-  </Transition>
-
-  <Transition name="fade">
-    <div id="route" v-if="!isLoading && !isAuthenticated && $store.state.firstTimeUse">
+    <div id="route" v-if="$store.state.firstTimeUse">
       <Transition name="fade">
         <ProgressBar v-if="onboardingSlides" :currentSlide="currentSlide" :slideNumber="lastSlide"
           :contentDone="!onboardingSlides" />
@@ -89,7 +79,6 @@ import Image from '@/components/image.vue'
 import ProgressBar from '@/components/progress-bar.vue';
 import SlideOut from '@/components/slide-out.vue'
 import { title } from '@/assets/data/names.js'
-import axios from 'axios'
 
 export default {
   name: 'App',
@@ -105,20 +94,12 @@ export default {
 
   data() {
     return {
-      isLoading: this.$auth0.isLoading,
-      isAuthenticated: this.$auth0.isAuthenticated,
-      user: this.$auth0.user,
-
-      userData: null,
-      data: null,
-
       title: title,
       permission: "default",
       prompt: false,
 
       stars: false,
       showNavbar: false,
-      dataLoaded: false,
 
       onboardingSlides: true,
       currentSlide: 0,
@@ -126,57 +107,26 @@ export default {
     };
   },
 
-  methods: {
-    handleSignUp() {
-      this.$auth0.loginWithRedirect({
-        appState: {
-          target: "/home", // screen after signup
-        },
-        authorizationParams: {
-          screen_hint: "signup",
-        }
-      });
-    },
-    handleLogin() {
-      this.$auth0.loginWithRedirect({
-        appState: {
-          target: "/home", // screen after login
-        }
-      });
-    },
+  computed: {
+    isAuthenticated() {
+      return this.$store.state.username !== ""
+    }
+  },
 
+  methods: {
     async completeOnboarding() {
       await this.$store.dispatch('setOnboarding', false)
-      this.handleSignUp()
     },
 
     subscribeUser() {
-      this.$OneSignal.User.PushSubscription.optIn().then(() => {
+      this.$OneSignal.User.PushSubscription.optIn().then(async() => {
         this.permission = Notification.permission
+        await this.$store.dispatch("setID", this.$OneSignal.User.PushSubscription.id)
+        this.$OneSignal.login(this.$store.state.accountID)
       });
     },
     setSubscription(subscribed) {
       this.$store.dispatch("setSubscription", subscribed);
-    },
-
-    async fetchData() {
-      console.log("NUTZERDATEN")
-    console.log(this.user.sub + " and " + this.$store.state.username)
-
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + /*get or create*/ '/createUser', { auth: this.user.sub, name: this.$store.state.username }).then(async (response) => {
-        this.userData = response.data
-      }).catch(() => {
-        console.log("something went wrong.")
-      })
-
-      await axios.get(process.env.VUE_APP_API_SERVER_URL + "/getData").then(async (response) => {
-        //await this.$store.dispatch("storeCategories", data)
-        this.data = response.data
-      }).catch((error) => {
-        console.error(error)
-      })
-
-      this.dataLoaded = true
     }
   },
 
@@ -184,27 +134,11 @@ export default {
     async $route() {
       if (this.$route.name !== "Onboarding") {
         this.showNavbar = true
-        this.fetchData()
-      }
-    },
-
-    isLoading(loading) {
-      console.log(this.$store.state.firstTimeUse)
-      if (!loading) {
-        if (this.isAuthenticated) {
-          this.$OneSignal.login(this.user.sub)
-          this.fetchData()
-        } else if (!this.$store.state.firstTimeUse) {
-          this.handleLogin()
-        }
       }
     }
   },
 
   mounted() {
-    console.log("NOCH EIN TEST")
-    console.log(this.isLoading)
-
     setTimeout(() => {
       this.prompt = true
     }, 500)
