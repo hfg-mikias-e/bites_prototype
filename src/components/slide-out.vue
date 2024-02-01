@@ -48,6 +48,14 @@ export default {
         this.$emit('close-slideout')
       }
     }
+  },
+
+  created() {
+    document.querySelector('meta[name="theme-color"]').setAttribute("content", "#070609")
+  },
+
+  async beforeUnmount() {
+    await document.querySelector('meta[name="theme-color"]').setAttribute("content", "#1C1725")
   }
 };
 </script>
