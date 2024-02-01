@@ -47,7 +47,7 @@
         <Notifier v-if="saveState" @notificationDate="time => setTime(time)" />
 
         <div class="row" id="actionButtons">
-          <Button class="primary" v-if="!saveState" @click="$router.push('/content/' + currentContent._id)">
+          <Button class="primary" v-if="!saveState" @click="$router.push('/content/' + data.indexOf(currentContent))">
             <Image v-if="currentContent.practical" src="/img/sip.svg" />
             <Image v-else src="/img/bite.svg" />Start it!
           </Button>
