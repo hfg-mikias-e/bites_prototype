@@ -18,7 +18,7 @@
         <ProgressBar v-if="onboardingSlides" :currentSlide="currentSlide" :slideNumber="lastSlide"
           :contentDone="!onboardingSlides" />
       </Transition>
-      <Slides v-if="onboardingSlides" :content="{ _id: 'onboarding' }" :number="currentSlide + 1"
+      <Slides v-if="onboardingSlides" contentID="onboarding" :number="currentSlide + 1"
         @lastSlide="last => lastSlide = last" @currentSlide="current => currentSlide = current"
         @contentDone="onboardingSlides = false" />
       <div v-else>

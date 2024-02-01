@@ -38,7 +38,7 @@
         :finished="finished" :quiz="content.quiz !== undefined" :content="content" />
     </Transition>
 
-    <Slides v-if="!contentDone" :content="content" :number="currentSlide + 1"
+    <Slides v-if="!contentDone" :content="content" :contentID="contentID" :number="currentSlide + 1"
       @lastSlide="last => lastSlide = last" @currentSlide="current => currentSlide = current"
       @contentDone="completeContent" />
 
@@ -95,19 +95,22 @@ export default {
 
   methods: {
     returnComponent() {
+      console.log("contentID: " + this.contentID)
       const comp = defineAsyncComponent(() => import(`@/components/content/${this.contentID}/0.vue`))
       return markRaw(comp)
     },
 
-    /*
     async completeBite() {
+      /*
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/changeBiteState", { userId: this.user.sub, state: 'done', biteId: this.content._id }).then(async (response) => {
         this.$router.push('/done/' + this.content._id)
       }).catch((error) => {
         console.error(error)
       })
+      */
+      this.$store.dispatch("removeState", { content: this.contentID, state: "saved" })
+      this.$router.push('/done/' + this.contentID)
     },
-    */
 
     completeContent() {
       this.contentDone = true

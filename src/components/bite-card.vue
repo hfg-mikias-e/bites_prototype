@@ -3,12 +3,12 @@
             <div id="iconLine" class="row">
                 <h5 v-if="$store.state.saved.includes(contentID) && $store.state.notifs.find(index => index.content === contentID) !== undefined && !$store.state.saved.includes(contentID)" id="saved-date">{{ $store.state.notifs.find(index => index.content === contentID).date }}</h5>
                 <icon v-if="fav" :icon="heartIcon" @click.stop="$emit('setFav')" />
-                <icon v-if="!remind" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
+                <icon v-if="!remind && !fav" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
             </div>
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
             <div id="information" :class="{ spacing: $store.state.saved.includes(contentID) }">
                 <TransitionGroup name="list">
-                    <Badge v-if="static || (!$store.state.saved.includes(contentID) || $store.state.faved.includes(contentID))" :content="content" key="0">{{ content.skill }}</Badge>
+                    <Badge v-if="static || fav || !$store.state.saved.includes(contentID) || $store.state.faved.includes(contentID)" :content="content" key="0">{{ content.skill }}</Badge>
                     <h3 key="1">{{ content.name }}</h3>
                     <h4 key="2" v-if="static || !$store.state.saved.includes(contentID)">{{ content.description }}</h4>
                     <h4 key="3" v-else-if="!remind">saved to your library</h4>

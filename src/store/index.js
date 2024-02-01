@@ -9,11 +9,12 @@ export default createStore({
   state: {
     accountID: "",
     username: "",
+    
     subscribed: false,
     firstTimeUse: true,
 
     saved: [],
-    done: [],
+    //done: [],
     faved: [],
     notifs: []
   },

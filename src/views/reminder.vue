@@ -31,7 +31,7 @@
         <BiteCard :remind="true" :content="content" :details="true" />
         <Notifier @notificationDate="time => setTime(time)" />
         <div class="row" id="actionButtons">
-          <Button class="secondary" @click="$router.push('/home')">Skip</Button>
+          <Button class="secondary" @click="$router.push('/')">Skip</Button>
           <Button class="primary" :disabled="future >= 0" @click="createPushNotification">Set Reminder</Button>
         </div>
       </div>

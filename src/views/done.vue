@@ -73,7 +73,7 @@
               <h1 :style="{ opacity: (1 - 0.4 * (time - 2)) }" v-if="time > 1">But wait....</h1>
               <h1 :style="{ opacity: (1 - 0.4 * (time - 3)) }" v-if="time > 2">there is more to explore!</h1>
               <div id="bite-container" class="row details" v-if="time > 3">
-                <div id="image" :style="{ backgroundImage: 'url(/img/content/' + content._id + '.png)' }"></div>
+                <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
                 <div id="information">
                   <Badge :content="content">{{ content.skill }}</Badge>
                   <h3>{{ returnFollowUp().name }}</h3>
@@ -89,7 +89,7 @@
               <Button class="primary" @click="$router.push('/content/' + returnFollowUp()._id)">Jump right
                 in!</Button>
             </template>
-            <Button v-else @click="$router.push('/home')" class="primary">Take me back to Home</Button>
+            <Button v-else @click="$router.push('/')" class="primary">Take me back to Home</Button>
           </div>
         </div>
       </TransitionGroup>
@@ -99,7 +99,7 @@
           <h2>Set a reminder for this Sip</h2>
 
           <div id="bite-container" class="row saved">
-            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + content._id + '.png)' }"></div>
+            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
             <div>
               <Badge :content="content">{{ content.skill }}</Badge>
               <h3>{{ returnFollowUp().name }}</h3>
@@ -122,7 +122,7 @@
     <template v-else>
       Good work, you're all done here!
       (+1 cookie)
-      <Button @click="$router.push('/home')">Take me back to Home</Button>
+      <Button @click="$router.push('/')">Take me back to Home</Button>
     </template>
   </div>
 </template>
@@ -173,17 +173,15 @@ export default {
 
   methods: {
     async closeContent() {
-      this.$store.dispatch("removeSaved", this.contentID)
-
       this.later = false
       this.done = true
     },
 
     async favorite() {
       if (this.$store.state.faved.includes(this.contentID)) {
-        this.$store.dispatch("removeFaved", this.contentID)
+        this.$store.dispatch("removeState", { content: this.contentID, state: "faved" })
       } else {
-        this.$store.dispatch("addFaved", this.contentID)
+        this.$store.dispatch("addState", { content: this.contentID, state: "faved" })
       }
     },
 
@@ -200,7 +198,6 @@ export default {
 
     async createPushNotification() {
       await this.closeContent()
-
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: {id: this.data.indexOf(this.returnFollowUp()) , ...this.returnFollowUp()}, date: this.notificationDate }).then(async (response) => {
         await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
         this.$store.dispatch("setNotification", response.data)

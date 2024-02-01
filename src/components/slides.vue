@@ -22,7 +22,8 @@ export default {
   },
 
   props: {
-    content: Object, 
+    content: Object,
+    contentID: Number,
     number: Number
   },
 
@@ -58,7 +59,7 @@ export default {
 
   methods: {
     returnComponent() {
-      const comp = defineAsyncComponent(() => import(`@/components/content/${this.content._id + "/" + this.number}.vue`))
+      const comp = defineAsyncComponent(() => import(`@/components/content/${this.contentID + "/" + this.number}.vue`))
       console.log(comp)
       return markRaw(comp)
     },
@@ -85,7 +86,7 @@ export default {
   async created() {
     let last = false
     while (!last) {
-      await import(`@/components/content/${this.content._id}/${this.lastSlide + 1}.vue`).then((_res) => {
+      await import(`@/components/content/${this.contentID}/${this.lastSlide + 1}.vue`).then((_res) => {
         console.log("add")
         this.lastSlide = this.lastSlide + 1
       }).catch(() => {
