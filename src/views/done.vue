@@ -86,7 +86,7 @@
             <!--<Button class="primary" @click="$router.push('/home')">Back to Home</Button>-->
             <template v-if="liked && returnFollowUp() !== undefined">
               <Button class="secondary" @click="later = true" icon="fa-regular fa-bookmark">Later</Button>
-              <Button class="primary" @click="$router.push('/content/' + returnFollowUp()._id)">Jump right
+              <Button class="primary" @click="$router.push('/content/' + data.indexOf(returnFollowUp()))">Jump right
                 in!</Button>
             </template>
             <Button v-else @click="$router.push('/')" class="primary">Take me back to Home</Button>

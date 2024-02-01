@@ -29,14 +29,6 @@
     src: url('./assets/font/NanumPenScript-Regular.ttf');
 }
 
-html {
-    height: 100%;
-    width: 100%;
-    flex-grow: 1;
-    background: linear-gradient(168deg, #1C1725 0%, #070710 75%);
-    background-color: #1C1725;
-}
-
 * {
     font-family: N27;
     line-height: 1.25;
@@ -55,6 +47,14 @@ html {
     -webkit-user-select: none; // Safari
 }
 
+html {
+    height: 100%;
+    width: 100%;
+    flex-grow: 1;
+    background: linear-gradient(168deg, #1C1725 0%, #070710 75%);
+    background-color: #1C1725;
+}
+
 html,
 body {
     font-size: 4.1125vw;
@@ -62,7 +62,7 @@ body {
     font-weight: 400;
     overflow: hidden;
     overflow-x: hidden;
-    
+    position: fixed;
 }
 
 #app,
