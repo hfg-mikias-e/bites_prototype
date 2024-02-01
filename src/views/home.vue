@@ -1,6 +1,5 @@
 <template>
   <div id="home">
-    {{ $store.state }}
     <div class="row">
       <h1>Hey, {{ $store.state.username }}!<br />Here are some helpful skills
         <span id="accent">for you

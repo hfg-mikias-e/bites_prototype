@@ -60,8 +60,9 @@ body {
     font-size: 4.1125vw;
     //font-size: 16px;
     font-weight: 400;
-    overflow: visible;
+    overflow: hidden;
     overflow-x: hidden;
+    
 }
 
 #app,
@@ -77,7 +78,7 @@ body {
     text-align: center;
     color: v.$text-color;
     box-sizing: border-box;
-    overflow: visible;
+    overflow: hidden;
     border-radius: 0;
 }
 
