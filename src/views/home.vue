@@ -183,9 +183,8 @@ export default {
           await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
         }
         this.$store.dispatch("setNotification", response.data)
+        this.closeContent()
       })
-
-      this.closeContent()
     },
 
     async changeSaveState(content) {
