@@ -197,10 +197,10 @@ export default {
     },
 
     async createPushNotification() {
-      await this.closeContent()
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: {id: this.data.indexOf(this.returnFollowUp()) , ...this.returnFollowUp()}, date: this.notificationDate }).then(async (response) => {
         await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
-        this.$store.dispatch("setNotification", response.data)
+        await this.$store.dispatch("setNotification", response.data)
+        this.closeContent()
       })
     },
 
