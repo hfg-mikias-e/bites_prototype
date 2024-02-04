@@ -1,6 +1,5 @@
 <template>
   <div id="home">
-  {{ currentContent }}
     <div class="row">
       <h1>Hey, {{ $store.state.username }}!<br />Here are some helpful skills
         <span id="accent">for you
@@ -175,6 +174,7 @@ export default {
 
     async createPushNotification() {
       const notifString = await this.returnTimeString(this.notificationDate)
+      console.log(this.notificationDate)
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.$store.state.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
 
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: { id: this.data.indexOf(this.currentContent), ...this.currentContent }, date: this.notificationDate }).then(async (response) => {
