@@ -6,7 +6,7 @@
                 <icon v-if="!remind && !fav" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
             </div>
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
-            <div id="information" :class="{ spacing: $store.state.saved.includes(contentID) }">
+            <div id="information" :class="{ spacing: $store.state.saved.includes(contentID) && !static }">
                 <TransitionGroup name="list">
                     <Badge v-if="static || fav || !$store.state.saved.includes(contentID) || $store.state.faved.includes(contentID)" :content="content" key="0">{{ content.skill }}</Badge>
                     <h3 key="1">{{ content.name }}</h3>

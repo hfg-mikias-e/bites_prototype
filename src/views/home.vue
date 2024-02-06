@@ -174,14 +174,13 @@ export default {
 
     async createPushNotification() {
       const notifString = await this.returnTimeString(this.notificationDate)
-      console.log(this.notificationDate)
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.$store.state.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
-
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: { id: this.data.indexOf(this.currentContent), ...this.currentContent }, date: this.notificationDate }).then(async (response) => {
-        if (this.$store.state.notifs.length > 0) {
-          console.log(this.$store.state.notifs, response.data)
-          await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
+        const oldNotif = this.$store.state.notifs.find(index => index.content === response.data.content)
+        if (oldNotif !== undefined) {
+          await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: oldNotif.id })
         }
+
         this.$store.dispatch("setNotification", response.data)
         this.closeContent()
       })

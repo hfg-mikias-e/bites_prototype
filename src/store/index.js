@@ -14,7 +14,6 @@ export default createStore({
     firstTimeUse: true,
 
     saved: [],
-    //done: [],
     faved: [],
     notifs: []
   },
