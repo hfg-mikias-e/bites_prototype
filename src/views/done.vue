@@ -136,6 +136,7 @@ import SlideOut from '@/components/slide-out.vue'
 import Notifier from '@/components/notifier.vue'
 import { content } from '@/assets/data/content.js'
 import axios from 'axios';
+import { DateTime } from 'luxon'
 
 export default {
   components: {
@@ -185,6 +186,11 @@ export default {
       }
     },
 
+    returnTimeString(timeString) {
+      const date = DateTime.fromISO(timeString)
+      return { day: date.setLocale('en-US').toRelativeCalendar(), time: date.toFormat('h:mm a') }
+    },
+
     setTimer(secs) {
       this.time = 1
       const timer = setInterval(() => {
@@ -197,8 +203,14 @@ export default {
     },
 
     async createPushNotification() {
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: {id: this.data.indexOf(this.returnFollowUp()) , ...this.returnFollowUp()}, date: this.notificationDate }).then(async (response) => {
-        await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: this.$store.state.notifs.find(index => index.content === response.data.content).id })
+      const notifString = await this.returnTimeString(this.notificationDate)
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.$store.state.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: { id: this.data.indexOf(this.returnFollowUp()), ...this.returnFollowUp() }, date: this.notificationDate }).then(async (response) => {
+        const oldNotif = this.$store.state.notifs.find(index => index.content === response.data.content)
+        if (oldNotif !== undefined) {
+          await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: oldNotif.id })
+        }
+
         await this.$store.dispatch("setNotification", response.data)
         this.closeContent()
       })

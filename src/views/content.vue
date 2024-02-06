@@ -108,7 +108,7 @@ export default {
         console.error(error)
       })
       */
-      this.$store.dispatch("removeState", { content: this.contentID, state: "saved" })
+      await this.$store.dispatch("removeState", { content: this.contentID, state: "saved" })
       this.$router.push('/done/' + this.contentID)
     },
 
@@ -117,11 +117,10 @@ export default {
 
       if (!this.content.quiz) {
         this.finished = true
-        /*
+
         setTimeout(() => {
           this.completeBite()
         }, 200)
-        */
       }
     },
 
