@@ -111,9 +111,9 @@
 
           <div class="row actionButtons">
             <Button class="secondary" @click="closeContent">Skip</Button>
-            <Button class="primary" icon="fa-regular fa-bell" :disabled="future >= 0"
+            <Button class="primary" icon="fa-regular fa-bell"
               @click="createPushNotification">Remind
-              me</Button>
+              me</Button> <!--:disabled="future >= 0"-->
           </div>
         </div>
       </SlideOut>

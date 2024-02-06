@@ -32,7 +32,7 @@
         <Notifier @notificationDate="time => setTime(time)" />
         <div class="row" id="actionButtons">
           <Button class="secondary" @click="$router.push('/')">Skip</Button>
-          <Button class="primary" :disabled="future >= 0" @click="createPushNotification">Set Reminder</Button>
+          <Button class="primary" @click="createPushNotification">Set Reminder</Button> <!--:disabled="future >= 0"-->
         </div>
       </div>
     </SlideOut>

@@ -53,7 +53,7 @@
           </Button>
           <template v-else>
             <Button class="secondary" @click="closeContent">Skip</Button>
-            <Button class="primary" :disabled="future >= 0" @click="createPushNotification">Set Reminder</Button>
+            <Button class="primary" @click="createPushNotification">Set Reminder</Button> <!--:disabled="future >= 0"-->
           </template>
         </div>
       </div>
