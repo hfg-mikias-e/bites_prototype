@@ -1,26 +1,26 @@
 <template>
-        <div id="bite-container" class="row" :class="{details: details, remind: remind, saved: saved, fav: fav}" v-if="content">
-            <div id="iconLine" class="row">
-                <h5 v-if="$store.state.saved.includes(contentID) && $store.state.notifs.find(index => index.content === contentID) !== undefined && !$store.state.saved.includes(contentID)" id="saved-date">{{ $store.state.notifs.find(index => index.content === contentID).date }}</h5>
-                <icon v-if="fav" :icon="heartIcon" @click.stop="$emit('setFav')" />
-                <icon v-if="!remind && !fav" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
-            </div>
-            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
-            <div id="information" :class="{ spacing: $store.state.saved.includes(contentID) && !static }">
-                <TransitionGroup name="list">
-                    <Badge v-if="static || fav || !$store.state.saved.includes(contentID) || $store.state.faved.includes(contentID)" :content="content" key="0">{{ content.skill }}</Badge>
-                    <h3 key="1">{{ content.name }}</h3>
-                    <h4 key="2" v-if="static || !$store.state.saved.includes(contentID)">{{ content.description }}</h4>
-                    <h4 key="3" v-else-if="!remind">saved to your library</h4>
-                    <div key="4" class="row" v-if="(!$store.state.saved.includes(contentID) && details && !remind) || (remind && !details)"
-                        id="content-type">
-                        <icon v-if="content.type" :icon="content.type" />
-                        <h4 v-if="content.minutes">{{ content.minutes }} min</h4>
-                        <h4 v-else-if="content.tag">{{ content.tag }}</h4>
-                    </div>
-                </TransitionGroup>
-            </div>
+    <div id="bite-container" class="row" :class="{ details: details, remind: remind, saved: saved, fav: fav }" v-if="content">
+        <div id="iconLine" class="row">
+            <h5 v-if="saved && $store.state.notifs.find(index => index.content === contentID) !== undefined && !$store.state.saved.includes(contentID)"
+                id="saved-date">{{ $store.state.notifs.find(index => index.content === contentID).date }}</h5>
+            <icon v-if="fav" :icon="heartIcon" @click.stop="$emit('setFav')" />
+            <icon v-if="!remind && !fav" :icon="bookmarkIcon" @click.stop="$emit('setBookmark')" />
         </div>
+        <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
+        <div id="information" :class="{ spacing: saved && !static }">
+            <TransitionGroup name="list">
+                <Badge v-if="static || fav || !saved || fav" :content="content" key="0" :area="skills.indexOf(content)">{{ content.skill }}</Badge>
+                <h3 key="1">{{ content.name }}</h3>
+                <h4 key="2" v-if="static || !saved">{{ content.description }}</h4>
+                <h4 key="3" v-else-if="saved && !remind">saved to your library</h4>
+                <div key="4" class="row" v-if="(!saved && details && !remind) || (remind && !details)" id="content-type">
+                    <icon v-if="content.type" :icon="content.type" />
+                    <h4 v-if="content.minutes">{{ content.minutes }} min</h4>
+                    <h4 v-else-if="content.tag">{{ content.tag }}</h4>
+                </div>
+            </TransitionGroup>
+        </div>
+    </div>
 </template>
   
 <script>
@@ -106,13 +106,17 @@ export default {
     width: 100%;
     gap: 0.75em;
 
+    >* {
+        width: 100%;
+    }
+
     #image {
-        width: 52%;
         aspect-ratio: 4/5;
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
         border-radius: 0.75em;
+        width: 52%;
     }
 
     #iconLine {
@@ -161,7 +165,6 @@ export default {
 
     #content-type {
         gap: 0.325em;
-        margin-top: -0.325em;
 
         h4 {
             font-weight: 500;
@@ -176,10 +179,9 @@ export default {
     }
 
     #information {
-        height: 100%;
         flex-grow: 1;
-        gap: 0.75em;
-        max-height: 100vh;
+        gap: 0.5em;
+        max-height: 1px;
 
         &.spacing {
             h3 {

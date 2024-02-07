@@ -63,6 +63,7 @@ export default {
   color: v.$text-color;
   z-index: 10;
   width: 100%;
+  //max-height: 50vh;
   padding: v.$viewport-padding-vertical v.$content-padding;
   border-radius: 1.5em;
   transition: all 0.4s ease-in-out;

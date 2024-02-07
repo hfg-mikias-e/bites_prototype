@@ -95,14 +95,6 @@ export default {
     }
 }
 */
-
-#date-container {
-    input {
-        //padding-left: calc(v.$viewport-padding-horizontal*2 + 1.4em);
-        width: 100%;
-    }
-}
-
 .dp__menu {
     background-color: v.$content-color;
     border-radius: 1.5em;

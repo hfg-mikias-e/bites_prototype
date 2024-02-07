@@ -9,7 +9,7 @@
 <script>
 export default {
     props: {
-        area: String
+        area: Number
     }
 }
 </script>
@@ -27,21 +27,21 @@ export default {
         font-weight: 500;
     }
 
-    &.area-65786415b5cab38bd49c4ea0 {
+    &.area-0 {
         h5 {
             color: v.$category-65786415b5cab38bd49c4ea0;
         }
         background-color: rgba(v.$category-65786415b5cab38bd49c4ea0, 0.2);
     }
 
-    &.area-65786453b5cab38bd49c4ea3 {
+    &.area-1 {
         h5 {
             color: v.$category-65786453b5cab38bd49c4ea3;
         }
         background-color: rgba(v.$category-65786453b5cab38bd49c4ea3, 0.2);
     }
 
-    &.area-6578643ab5cab38bd49c4ea1 {
+    &.area-2 {
         h5 {
             color: v.$category-6578643ab5cab38bd49c4ea1;
         }

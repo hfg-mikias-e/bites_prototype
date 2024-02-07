@@ -1,8 +1,8 @@
 <template>
   <Transition name="fade">
-    <div id="date-inputs">
+    <div id="date-inputs" :class="{ show: show }">
       <DatePicker :dateFormat="dateFormat" @setDate="d => date = d" />
-      <input v-model="inputTime" @blur="setTime($event)"/>
+      <input v-model="inputTime" @blur="setTime($event)" />
     </div>
   </Transition>
 </template>
@@ -21,7 +21,8 @@ export default {
   props: {
     //content: Object,
     sendNotification: Boolean,
-    reminderDate: String
+    reminderDate: String,
+    show: Boolean
   },
 
   emits: ["notificationDate"],
@@ -119,7 +120,7 @@ export default {
     }, 100)
 
     this.time = DateTime.now()/*.plus({ hours: 1 })*/.toFormat(this.timeFormat)
-    if(this.reminderDate) {
+    if (this.reminderDate) {
       this.time = DateTime.fromISO(this.reminderDate).toFormat(this.timeFormat)
     }
 
@@ -133,11 +134,17 @@ export default {
 @use "variables" as v;
 
 #date-inputs {
+  height: 1px;
+  opacity: 0;
+  margin: -0.625em 0;
+
   width: 100%;
   gap: 0.5em;
 
-  input {
-    background-color: rgba(v.$text-color, 0.05);
+  &.show {
+    height: calc(2*3em + 1.75em);
+    opacity: 1;
+    margin: 0;
   }
 }
 </style>

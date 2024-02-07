@@ -1,42 +1,42 @@
 <template>
-  <div id="reminder" v-if="content">
-    <div class="row">
-      <h1>Hey, {{ $store.state.username }}!<br />It's time for your
-        <span id="accent">planned <span v-if="content.practical">Sip</span><span v-else>Bite</span>!
-          <Image src="/img/accents/sparkle.png" />
-        </span>
-      </h1>
-    </div>
-
-    <div id="content">
-      <h5>planned for today at {{ time }}:</h5>
-      <BiteCard :remind="true" :static="true" :content="content" />
-    </div>
-
-    <div class="row" id="actionButtons">
-      <Button class="secondary" @click="newDate = true">Postpone</Button>
-      <Button v-if="content.practical" class="primary" @click="$router.push('/content/' + contentID)">
-        <Image src="/img/sip.svg" />
-        Start the Sip!
-      </Button>
-      <Button v-else class="primary" @click="$router.push('/content/' + contentID)">
-        <Image src="/img/bite.svg" />
-        Start the Bite!
-      </Button>
-    </div>
-
-    <SlideOut :open="newDate" :persist="true" @close-slideout="newDate = false">
-      <div id="startBite" v-if="content">
-        <h2>Set a new reminder</h2>
-        <BiteCard :remind="true" :content="content" :details="true" />
-        <Notifier @notificationDate="time => setTime(time)" />
-        <div class="row" id="actionButtons">
-          <Button class="secondary" @click="$router.push('/')">Skip</Button>
-          <Button class="primary" @click="createPushNotification">Set Reminder</Button> <!--:disabled="future >= 0"-->
-        </div>
+    <div id="reminder" v-if="content">
+      <div class="row">
+        <h1>Hey, {{ $store.state.username }}!<br />It's time for your
+          <span id="accent">planned <span v-if="content.practical">Sip</span><span v-else>Bite</span>!
+            <Image src="/img/accents/sparkle.png" />
+          </span>
+        </h1>
       </div>
-    </SlideOut>
-  </div>
+
+      <div id="content">
+        <h5>planned for today at {{ time }}:</h5>
+        <BiteCard :remind="true" :static="true" :content="content" />
+      </div>
+
+      <div class="row" id="actionButtons">
+        <Button class="secondary" @click="newDate = true">Postpone</Button>
+        <Button v-if="content.practical" class="primary" @click="$router.push('/content/' + contentID)">
+          <Image src="/img/sip.svg" />
+          Start the Sip!
+        </Button>
+        <Button v-else class="primary" @click="$router.push('/content/' + contentID)">
+          <Image src="/img/bite.svg" />
+          Start the Bite!
+        </Button>
+      </div>
+
+      <SlideOut :open="newDate" :persist="true" @close-slideout="newDate = false">
+        <div id="startBite" v-if="content">
+          <h2>Set a new reminder</h2>
+          <BiteCard :remind="true" :content="content" :details="true" />
+          <Notifier @notificationDate="time => setTime(time)" />
+          <div class="row" id="actionButtons">
+            <Button class="secondary" @click="$router.push('/')">Skip</Button>
+            <Button class="primary" @click="createPushNotification">Set Reminder</Button> <!--:disabled="future >= 0"-->
+          </div>
+        </div>
+      </SlideOut>
+    </div>
 </template>
 
 <script>

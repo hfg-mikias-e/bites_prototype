@@ -23,7 +23,7 @@
         </template>
 
         <Transition name="fade">
-          <div id="note" v-if="!saveState && !$store.state.saved.includes(data.indexOf(currentContent))">
+          <div id="note" v-show="!saveState && !$store.state.saved.includes(data.indexOf(currentContent))">
             <h4>bad timing?</h4>
             <Image src="/img/accents/arrow.png" />
           </div>
@@ -32,7 +32,7 @@
         <BiteCard :details="true" :saved="saveState" :content="currentContent"
           @setBookmark="checkForSave(currentContent)" />
 
-        <template v-if="returnFollowUp() && !saveState">
+        <div id="follow-up" v-if="returnFollowUp()" :class="{hidden: saveState}">
           <h4>Unlocks the following Sip:</h4>
           <div id="bite-container" class="row follow-up">
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + data.indexOf(currentContent) + '.png)' }">
@@ -42,9 +42,9 @@
             <h4>{{ returnFollowUp().name }}</h4>
             <Image src="/img/sip.svg" />
           </div>
-        </template>
+        </div>
 
-        <Notifier v-if="saveState" @notificationDate="time => setTime(time)" />
+        <Notifier @notificationDate="time => setTime(time)" :show="saveState" />
 
         <div class="row" id="actionButtons">
           <Button class="primary" v-if="!saveState" @click="$router.push('/content/' + data.indexOf(currentContent))">
@@ -134,14 +134,14 @@ export default {
     */
 
     openContent(content, bookmark) {
-      // don't open Slideout if bookmarked (when bookmark clicked)
+      // don't open Slideout if already bookmarked (when bookmark clicked)
       if (!bookmark || (bookmark && !this.$store.state.saved.includes(this.data.indexOf(content)))) {
         this.currentContent = content
         this.$emit("showNavbar", false)
       }
 
-      // states which should not change the saveState -> possibly more simple if closeContent doesn't reset saveState ...
-      if (!((bookmark && !this.currentContent) || (!this.saveState && !bookmark) || (this.currentContent && this.$store.state.saved.includes(content) && !this.saveState))) {
+      // states which should not change the saveState
+      if (bookmark && (!this.$store.state.saved.includes(this.data.indexOf(content)) || this.$store.state.saved.includes(this.data.indexOf(content)) && this.saveState)) {
         this.saveState = !this.saveState
       }
     },
@@ -270,6 +270,22 @@ export default {
   }
 }
 
+#follow-up {
+  gap: 0.5em;
+  height: 5.75em;
+
+  &.hidden {
+    height: 1px;
+    margin-top: -1.375em;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  h4 {
+    font-weight: bold;
+  }
+}
+
 #bite-container {
   &.due {
     background-color: rgba(v.$primary-color, 0.4);
@@ -279,6 +295,10 @@ export default {
     padding: 0;
     background: none;
     align-items: center;
+
+    h4 {
+      flex-grow: 1;
+    }
 
     #image {
       aspect-ratio: 7/4;
