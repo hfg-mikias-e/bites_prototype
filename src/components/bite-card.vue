@@ -9,7 +9,7 @@
         <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
         <div id="information" :class="{ spacing: saved && !static }">
             <TransitionGroup name="list">
-                <Badge v-if="static || fav || !saved || fav" :content="content" key="0" :area="skills.indexOf(content)">{{ content.skill }}</Badge>
+                <Badge v-if="static || fav || !saved || fav" :content="content" key="0" :area="areas.findIndex(index => index.skills.includes(content.skill))">{{ content.skill }}</Badge>
                 <h3 key="1">{{ content.name }}</h3>
                 <h4 key="2" v-if="static || !saved">{{ content.description }}</h4>
                 <h4 key="3" v-else-if="saved && !remind">saved to your library</h4>
@@ -38,7 +38,8 @@ export default {
 
     data() {
         return {
-            skills: content
+            skills: content,
+            areas: categories
         }
     },
 

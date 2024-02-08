@@ -75,7 +75,7 @@
               <div id="bite-container" class="row details" v-if="time > 3">
                 <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
                 <div id="information">
-                  <Badge :content="content">{{ content.skill }}</Badge>
+                  <Badge :content="content" :area="areas.findIndex(index => index.skills.includes(content.skill))">{{ content.skill }}</Badge>
                   <h3>{{ returnFollowUp().name }}</h3>
                   <h4 v-if="!saved">{{ returnFollowUp().description }}</h4>
                 </div>
@@ -101,13 +101,13 @@
           <div id="bite-container" class="row saved">
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
             <div>
-              <Badge :content="content">{{ content.skill }}</Badge>
+              <Badge :content="content" :area="areas.findIndex(index => index.skills.includes(content.skill))">{{ content.skill }}</Badge>
               <h3>{{ returnFollowUp().name }}</h3>
               <h4>saved in your library</h4>
             </div>
           </div>
 
-          <Notifier @notificationDate="time => setTime(time)" />
+          <Notifier @notificationDate="time => setTime(time)" :show="true" />
 
           <div class="row actionButtons">
             <Button class="secondary" @click="closeContent">Skip</Button>
@@ -134,7 +134,7 @@ import Badge from '@/components/badge.vue'
 import BiteCard from '@/components/bite-card.vue'
 import SlideOut from '@/components/slide-out.vue'
 import Notifier from '@/components/notifier.vue'
-import { content } from '@/assets/data/content.js'
+import { content, categories } from '@/assets/data/content.js'
 import axios from 'axios';
 import { DateTime } from 'luxon'
 
@@ -162,7 +162,8 @@ export default {
       future: null,
       notificationDate: null,
       done: false,
-      data: content
+      data: content,
+      areas: categories
     };
   },
 

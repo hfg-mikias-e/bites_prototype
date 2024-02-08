@@ -29,7 +29,7 @@
         <div id="startBite" v-if="content">
           <h2>Set a new reminder</h2>
           <BiteCard :remind="true" :content="content" :details="true" />
-          <Notifier @notificationDate="time => setTime(time)" />
+          <Notifier @notificationDate="time => setTime(time)" :show="true" />
           <div class="row" id="actionButtons">
             <Button class="secondary" @click="$router.push('/')">Skip</Button>
             <Button class="primary" @click="createPushNotification">Set Reminder</Button> <!--:disabled="future >= 0"-->

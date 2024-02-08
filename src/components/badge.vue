@@ -36,16 +36,16 @@ export default {
 
     &.area-1 {
         h5 {
-            color: v.$category-65786453b5cab38bd49c4ea3;
+            color: v.$category-6578643ab5cab38bd49c4ea1;
         }
-        background-color: rgba(v.$category-65786453b5cab38bd49c4ea3, 0.2);
+        background-color: rgba(v.$category-6578643ab5cab38bd49c4ea1, 0.2);
     }
 
     &.area-2 {
         h5 {
-            color: v.$category-6578643ab5cab38bd49c4ea1;
+            color: v.$category-65786453b5cab38bd49c4ea3;
         }
-        background-color: rgba(v.$category-6578643ab5cab38bd49c4ea1, 0.2);
+        background-color: rgba(v.$category-65786453b5cab38bd49c4ea3, 0.2);
     }
 }
 </style>
