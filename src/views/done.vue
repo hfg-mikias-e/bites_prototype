@@ -72,14 +72,7 @@
               </h1>
               <h1 :style="{ opacity: (1 - 0.4 * (time - 2)) }" v-if="time > 1">But wait....</h1>
               <h1 :style="{ opacity: (1 - 0.4 * (time - 3)) }" v-if="time > 2">there is more to explore!</h1>
-              <div id="bite-container" class="row details" v-if="time > 3">
-                <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
-                <div id="information">
-                  <Badge :content="content" :area="areas.findIndex(index => index.skills.includes(content.skill))">{{ content.skill }}</Badge>
-                  <h3>{{ returnFollowUp().name }}</h3>
-                  <h4 v-if="!saved">{{ returnFollowUp().description }}</h4>
-                </div>
-              </div>
+              <BiteCard :details="true" :content="returnFollowUp()" v-if="time > 3"/>
             </TransitionGroup>
           </div>
           <div class="row actionButtons" v-if="time === animationDone">
@@ -94,25 +87,16 @@
         </div>
       </TransitionGroup>
 
-      <SlideOut :open="later" :persist="!reminder" ref="slideout" @close-slideout="later = false">
+      <SlideOut :open="later" :persist="true" ref="slideout" @close-slideout="later = false">
         <div id="startBite" v-if="returnFollowUp() !== undefined">
           <h2>Set a reminder for this Sip</h2>
 
-          <div id="bite-container" class="row saved">
-            <div id="image" :style="{ backgroundImage: 'url(/img/content/' + contentID + '.png)' }"></div>
-            <div>
-              <Badge :content="content" :area="areas.findIndex(index => index.skills.includes(content.skill))">{{ content.skill }}</Badge>
-              <h3>{{ returnFollowUp().name }}</h3>
-              <h4>saved in your library</h4>
-            </div>
-          </div>
-
+          <BiteCard :details="true" :saved="true" :content="returnFollowUp() "/>
           <Notifier @notificationDate="time => setTime(time)" :show="true" />
 
           <div class="row actionButtons">
             <Button class="secondary" @click="closeContent">Skip</Button>
-            <Button class="primary" icon="fa-regular fa-bell"
-              @click="createPushNotification">Remind
+            <Button class="primary" icon="fa-regular fa-bell" @click="createPushNotification">Remind
               me</Button> <!--:disabled="future >= 0"-->
           </div>
         </div>
@@ -175,7 +159,6 @@ export default {
 
   methods: {
     async closeContent() {
-      this.later = false
       this.done = true
     },
 
@@ -239,6 +222,14 @@ export default {
       }
     },
 
+    later(forLater) {
+      if(forLater) {
+        this.$store.dispatch("addState", { content: this.data.indexOf(this.returnFollowUp()), state: "saved" })
+      } else {
+        this.$store.dispatch("removeState", { content: this.data.indexOf(this.returnFollowUp()), state: "saved" })
+      }
+    },
+
     time(time) {
       if (this.evaluation && time === this.animationDone) {
         this.mystery = false
@@ -291,8 +282,9 @@ export default {
     gap: 1.5em;
 
     #note {
-      right: 2%;
-      top: 2.5%;
+      gap: 0.25em;
+      right: 1.75%;
+      top: 5%;
 
       img {
         transform: scaleY(-1) rotate(2deg);
@@ -366,4 +358,5 @@ h2 {
   #bite-container {
     margin-top: 0.5em;
   }
-}</style>
+}
+</style>

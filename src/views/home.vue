@@ -252,8 +252,9 @@ export default {
   gap: 1.25em;
 
   #note {
-    right: 3.5%;
-    top: 5%;
+    gap: 0.125em;
+    right: 3.875%;
+    top: 7%;
 
     img {
       transform: scaleY(-1) rotate(4.769deg);
