@@ -85,7 +85,7 @@ export default {
       const notifString = await this.returnTimeString(this.notificationDate)
       await axios.post(process.env.VUE_APP_API_SERVER_URL + "/showMessage", { external_id: this.$store.state.accountID, message: `Reminder successfully set for ${notifString.day} at ${notifString.time}!` })
 
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: { id: this.data.indexOf(this.currentContent), ...this.currentContent }, date: this.notificationDate }).then(async (response) => {
+      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/createNotification", { external_id: this.$store.state.accountID, content: { id: this.contentID, ...this.content }, date: this.notificationDate }).then(async (response) => {
         const oldNotif = this.$store.state.notifs.find(index => index.content === response.data.content)
         if (oldNotif !== undefined) {
           await axios.post(process.env.VUE_APP_API_SERVER_URL + "/cancelNotification", { oldNotif: oldNotif.id })
@@ -94,7 +94,7 @@ export default {
         await this.$store.dispatch("setNotification", response.data)
         this.$router.push('/')
       })
-    },
+    }
   },
 
   computed: {

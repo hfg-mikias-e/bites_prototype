@@ -79,6 +79,10 @@ button {
         background: none;
         color: v.$primary-color;
         border: 1px solid v.$primary-color;
+
+        * {
+            color: v.$primary-color;
+        }
     }
 
     &.complete {
