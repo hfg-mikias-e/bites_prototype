@@ -70,6 +70,10 @@ button {
         background: none;
         background-color: v.$primary-color;
         color: v.$background-color;
+
+        * {
+            color: v.$background-color;
+        }
     }
     &.secondary {
         background: none;

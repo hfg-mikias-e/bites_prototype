@@ -14,6 +14,11 @@
         :content="skill" @click="openContent(skill, false)" @setBookmark="checkForSave(skill)" />
     </div>
 
+    <div id="demo">
+      <h4>This application is a demo and contains a small selection of sample content. It also includes the ability to
+        save and receive reminders.</h4>
+    </div>
+
     <SlideOut :open="currentContent !== null" :persist="!saveState" ref="slideout" @close-slideout="closeContent">
       <div id="startBite" v-if="currentContent">
         <h2 v-if="saveState">Want to add a reminder?</h2>
@@ -32,7 +37,7 @@
         <BiteCard :details="true" :saved="saveState" :content="currentContent"
           @setBookmark="checkForSave(currentContent)" />
 
-        <div id="follow-up" v-if="returnFollowUp()" :class="{hidden: saveState}">
+        <div id="follow-up" v-if="returnFollowUp()" :class="{ hidden: saveState }">
           <h4>Unlocks the following Sip:</h4>
           <div id="bite-container" class="row follow-up">
             <div id="image" :style="{ backgroundImage: 'url(/img/content/' + data.indexOf(currentContent) + '.png)' }">
@@ -221,22 +226,12 @@ export default {
 
     &:first-child {
       align-items: flex-start;
-
-      h1 {
-        margin-top: 0.25em;
-      }
     }
   }
 
-  #accent {
-    color: v.$primary-color;
-
-    img {
-      background: none;
-      width: 1.25em;
-      position: absolute;
-      transform: translate(-25%, -25%);
-    }
+  #accent img {
+    width: 1.25em;
+    transform: translate(-25%, -25%);
   }
 }
 

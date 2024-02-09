@@ -1,10 +1,11 @@
 <template>
   <transition :name="direction ? 'slide-fade' : 'slide-fade-reverse'">
-    <div v-if="!transition" id="slide" @touchstart="touchStartMethod">
-      <component :is="component" @contentDone="$emit('contentDone')" />
+    <div v-if="!transition" id="slide" @touchstart="touchStartMethod" :class="{card: $route.name === 'Content'}">
+      <component :is="component" @contentDone="$emit('contentDone')" @stars="stars"/>
       <Transition name="fade">
-        <div id="note" v-if="currentSlide === 0 && $route.name === 'Content' && !content.practical && content.type === 'book'">
-          <h2>swipe to<br/>continue!</h2>
+        <div id="note"
+          v-if="currentSlide === 0 && $route.name === 'Content' && !content.practical && content.type === 'book'">
+          <h2>swipe to<br />continue!</h2>
           <Image src="/img/accents/arrow.png" />
         </div>
       </Transition>
@@ -23,11 +24,11 @@ export default {
 
   props: {
     content: Object,
-    contentID: Number,
+    contentID: [ String, Number ],
     number: Number
   },
 
-  emits: ["lastSlide", "currentSlide", "contentDone"],
+  emits: ["lastSlide", "currentSlide", "contentDone", "stars"],
 
   data() {
     return {
@@ -81,6 +82,11 @@ export default {
 
       this.$emit("currentSlide", this.currentSlide)
     },
+
+    stars(val) {
+      console.log(val)
+      this.$emit("stars", val)
+    }
   },
 
   async created() {
@@ -107,29 +113,35 @@ export default {
 @use "variables" as v;
 
 #slide {
-  overflow: hidden;
-  background-color: v.$content-color;
-  border-radius: 2.5em;
-  position: fixed;
-  top: 2em;
-  left: 0.5em;
-  width: calc(100vw - 1em);
-  height: calc(100% - 3.75em);
-  align-items: center;
+  padding: 0.5em;
   gap: v.$content-gap;
-  padding: 20% 1.5em;
 
-  video, iframe {
+  &.card {
+    align-items: center;
+    overflow: hidden;
+    padding: 20% 1.5em;
+    background-color: v.$content-color;
+    border-radius: 2.5em;
+    position: fixed;
+    top: 2em;
+    left: 0.5em;
+    width: calc(100vw - 1em);
+    height: calc(100% - 3.75em);
+  }
+
+  video,
+  iframe {
     background: none;
   }
 
-  p,b {
+  p,
+  b {
     font-size: 1.125em;
     line-height: 140%;
   }
 
   img {
-    max-width: 60%;
+    max-width: 50vw;
     margin: 0 auto;
   }
 
@@ -175,5 +187,4 @@ export default {
 .slide-fade-leave-to,
 .slide-fade-reverse-enter-from {
   transform: translateX(-100%);
-}
-</style>
+}</style>

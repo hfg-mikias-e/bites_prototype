@@ -95,6 +95,10 @@ export default {
 }
 
 #quizCard {
+  * {
+    color: v.$background-color;
+  }
+  
   padding: calc(2.5*v.$viewport-padding-horizontal);
   background-color: v.$text-color;
   color: v.$background-color;

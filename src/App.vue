@@ -6,21 +6,23 @@
           <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val" @stars="star => stars = star" />
         </transition>
       </router-view>
+      <!--
       <Transition name="fade" appear>
         <Navbar :disabled="!showNavbar" />
       </Transition>
+      -->
     </div>
   </Transition>
 
   <Transition name="fade">
-    <div id="route" v-if="$store.state.firstTimeUse">
+    <div id="route" :class="{ space: stars }" v-if="$store.state.firstTimeUse">
       <Transition name="fade">
         <ProgressBar v-if="onboardingSlides" :currentSlide="currentSlide" :slideNumber="lastSlide"
           :contentDone="!onboardingSlides" />
       </Transition>
       <Slides v-if="onboardingSlides" contentID="onboarding" :number="currentSlide + 1"
         @lastSlide="last => lastSlide = last" @currentSlide="current => currentSlide = current"
-        @contentDone="onboardingSlides = false" />
+        @contentDone="onboardingSlides = false" @stars="star => stars = star" @colors="color => colors = color"/>
       <div v-else>
         <h1>Welcome on board, {{ $store.state.username }}!</h1>
         <Button class="primary complete" @click="completeOnboarding">Let's get started!</Button>
@@ -34,12 +36,13 @@
             <div id="action">
               <Image src="/img/share-icon.png" />
             </div>
+            <p>in your browser</p>
           </div>
           <div class="row">
             <p>2. Select</p>
             <div id="action">Add to Home Screen</div>
           </div>
-          <p>3. Open {{ title }} over your freshly installed App!</p>
+          <b>3. Open {{ title }} over your freshly installed App!</b>
         </div>
       </SlideOut>
     </div>

@@ -132,7 +132,7 @@ export default {
     Badge
   },
 
-  emits: ["stars"],
+  emits: ['showNavbar', 'stars'],
 
   data() {
     return {

@@ -38,7 +38,7 @@
         :finished="finished" :quiz="content.quiz !== undefined" :content="content" />
     </Transition>
 
-    <Slides v-if="!contentDone" :content="content" :contentID="contentID" :number="currentSlide + 1"
+    <Slides class="card" v-if="!contentDone" :content="content" :contentID="contentID" :number="currentSlide + 1"
       @lastSlide="last => lastSlide = last" @currentSlide="current => currentSlide = current"
       @contentDone="completeContent" />
 
@@ -166,6 +166,10 @@ export default {
 @use "variables" as v;
 
 #infoCard {
+  * {
+    color: v.$background-color;
+  }
+
   position: fixed;
   left: 0;
   top: 0;
@@ -173,7 +177,6 @@ export default {
   height: 100%;
   border-radius: 0;
   background-color: v.$primary-color;
-  color: v.$background-color;
   padding: calc(2* v.$viewport-padding-horizontal);
   //padding-top: calc(2* v.$viewport-padding-vertical);
   z-index: 1;
