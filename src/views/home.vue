@@ -229,11 +229,15 @@ export default {
     }
   }
 
-  #accent img {
-    width: 1.25em;
-    transform: translate(-25%, -25%);
-    position: absolute;
-    background: none;
+  #accent {
+    color: v.$primary-color;
+
+    img {
+      width: 1.25em;
+      transform: translate(-25%, -25%);
+      position: absolute;
+      background: none;
+    }
   }
 }
 
