@@ -3,7 +3,7 @@
     <div id="route" :class="{ navbar: showNavbar, space: stars }" v-if="!$store.state.firstTimeUse">
       <router-view v-slot="{ Component, route }" mode="out-in">
         <transition name="fade">
-          <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val" @stars="star => stars = star" />
+          <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val" @stars="star => stars = star" @resetPrototype="onboardingSlides = true"/>
         </transition>
       </router-view>
       <!--

@@ -85,7 +85,7 @@ export default {
     Button
   },
 
-  emits: ["showNavbar"],
+  emits: ["showNavbar", "resetPrototype"],
 
   data() {
     return {
@@ -102,7 +102,7 @@ export default {
   methods: {
     async resetPrototype() {
       await this.$store.dispatch('setOnboarding', true)
-      console.log("hello")
+      this.$emit("resetPrototype")
     },
 
     randomNumber(min, max) {
