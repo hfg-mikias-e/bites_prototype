@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <div class="row">
-      <h1>Hey, {{ $store.state.username }}!<br />Here are some helpful skills
+      <h1 @click="resetPrototype()">Hey, {{ $store.state.username }}!<br />Here are some helpful skills
         <span id="accent">for you
           <Image src="/img/accents/show.png" />
         </span>
@@ -100,6 +100,11 @@ export default {
   },
 
   methods: {
+    async resetPrototype() {
+      await this.$store.dispatch('setOnboarding', true)
+      console.log("hello")
+    },
+
     randomNumber(min, max) {
       return Math.random() * (max - min) + min
     },

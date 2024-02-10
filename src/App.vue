@@ -162,9 +162,11 @@ export default {
   overflow-x: hidden;
   border-radius: 0;
 
+  /*
   &.navbar {
     padding-bottom: calc(v.$navbar-height + v.$viewport-padding-vertical + v.$content-gap);
   }
+  */
 
   &.space {
     background-image: url('../public/img/stars.png');
