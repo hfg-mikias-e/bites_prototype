@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import Slides from '@/components/slides.vue'
 import Quiz from '@/components/quiz.vue'
 import ProgressBar from '@/components/progress-bar.vue'

@@ -96,8 +96,6 @@ export default {
       })
     }
     this.$emit("lastSlide", this.lastSlide)
-
-    //await this.checkForLast()
     this.component = this.returnComponent()
   }
 }
@@ -121,6 +119,12 @@ export default {
     left: 0.5em;
     width: calc(100% - 1em);
     height: calc(100% - 3.75em);
+
+    button {
+      position: absolute;
+      bottom: 1.5em;
+      width: calc(100% - 2.5em);
+    }
   }
 
   video,
