@@ -110,7 +110,6 @@ export default {
     },
 
     setTime(time) {
-      console.log("setTime")
       this.notificationDate = time[0]
       this.future = time[1]
     },

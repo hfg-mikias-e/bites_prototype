@@ -105,7 +105,6 @@ export default {
 
   created() {
     this.$emit('showNavbar', false)
-    console.log(this.contentID)
     this.content = this.data[this.contentID]
 
     const notif = this.$store.state.notifs.find(index => index.content === this.contentID)

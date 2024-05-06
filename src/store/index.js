@@ -37,11 +37,9 @@ export default createStore({
     },
 
     ADD_STATE(state, data) {
-      console.log(data.state)
       state[data.state].push(data.content)
     },
     REM_STATE(state, data) {
-      console.log("REMOVE")
       state[data.state] = state[data.state].filter(index => index !== data.content)
     }
   },

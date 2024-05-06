@@ -53,8 +53,6 @@ export default {
 
   methods: {
     nextQuestion(answer) {
-      console.log(this.currentQuestion, this.questions.length)
-
       if (answer === this.questions[this.currentQuestion].answer) {
         this.correct = true
         setTimeout(() => {

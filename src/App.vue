@@ -1,6 +1,7 @@
 <template>
   <TransitionGroup name="fade" mode="out-in">
-    <div id="route" :style="{ paddingTop: $route.name === 'Content' ? 0 : 'unset' }" :class="{ navbar: showNavbar, space: stars }" v-if="!$store.state.firstTimeUse">
+    <div id="route" :style="{ paddingTop: $route.name === 'Content' ? 0 : 'unset' }"
+      :class="{ navbar: showNavbar, space: stars }" v-if="!$store.state.firstTimeUse">
       <router-view v-slot="{ Component, route }">
         <transition name="fade" mode="out-in">
           <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val"
@@ -21,24 +22,17 @@
         <Button class="primary" @click="completeOnboarding">Let's get started!</Button>
       </div>
 
-      <SlideOut :open="prompt !== null" :persist="true" @close-slideout="prompt = null">
+      <SlideOut :open="prompt !== null || !standaloneMode" :persist="true" @close-slideout="prompt = null">
         <div id="info">
-          <h3>Install and access this App directly from the Home screen of your phone for the best experience, such as receiving Notifications for your saved content!</h3>
-          <Button class="primary" @click="install">Install Bites</Button>
-        <!--
-          <div class="row">
-            <p>1. Tap on</p>
-            <div id="action">
-              <Image src="/img/share-icon.png" />
+          <h3>Install and access this App directly from the Home screen of your phone for the best experience, such as
+            receiving Notifications for your saved content!</h3>
+          <Button v-if="installPossible" class="primary" @click="install">Install Bites</Button>
+          <template v-else>
+            <div class="row">
+              <p>1. Tap the <span class="action">share option</span> (<Image src="/img/share-icon.png" />) in your browser and select <span class="action">"Add to Home Screen"</span>!</p>
             </div>
-            <p>in your browser</p>
-          </div>
-          <div class="row">
-            <p>2. Select</p>
-            <div id="action">Add to Home Screen</div>
-          </div>
-          <b>3. Open {{ title }} over your freshly installed App!</b>
-        -->
+            <p>2. Open {{ title }} over your freshly installed App!</p>
+          </template>
         </div>
       </SlideOut>
     </div>
@@ -97,6 +91,8 @@
         title: title,
         permission: "default",
         prompt: null,
+        installPossible: false,
+        standaloneMode: true,
 
         stars: false,
         showNavbar: false,
@@ -120,7 +116,6 @@
 
       async install() {
         if (this.promt !== null) {
-          console.log(this.prompt)
           this.prompt.prompt();
         }
       },
@@ -149,18 +144,17 @@
       window.addEventListener("beforeinstallprompt", e => {
         e.preventDefault();
         // Stash the event so it can be triggered later.
-        this.prompt = e;
-      });
-      window.addEventListener("appinstalled", () => {
-        this.prompt = null;
-        alert("this is installed already")
-      });
+        this.prompt = e
+        this.installPossible = true
+      })
 
-      /*
-      setTimeout(() => {
-        this.prompt = true
-      }, 500)
-      */
+      window.addEventListener("appinstalled", () => {
+        this.prompt = null
+      })
+
+      if(!this.installPossible) {
+        this.standaloneMode = ('standalone' in window.navigator) && window.navigator.standalone
+      }
     },
   }
 </script>
@@ -190,34 +184,19 @@
   }
 
   #info {
-      gap: 1em;
-      padding: 1em 0;
+    gap: 1em;
+    padding: 1em 0;
 
-      h3 {
-        margin-bottom: 1em;
-      }
-
-      p {
-        font-weight: 500;
-      }
-
-      #action {
-        padding: 0.25em 0.5em;
-        background-color: rgba(v.$text-color, 0.2);
-        border-radius: 0.5em;
-        width: fit-content;
-        font-weight: 500;
-      }
-
-      .row {
-        gap: 0.75em;
-      }
-
-      img {
-        background: none;
-        width: 1.5em;
-      }
+    span.action {
+      color: rgb(64, 156, 255);
     }
+
+    img {
+      background: none;
+      width: 1.5em;
+      transform: translateY(25%);
+    }
+  }
 
   #onboarding {
     padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;

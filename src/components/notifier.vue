@@ -58,15 +58,6 @@ export default {
         this.time = this.inputTime
       }
     },
-
-    /*
-    sendNotification(send) {
-      console.log(send)
-      if(send) {
-        this.createPushNotification(this.content)
-      }
-    }
-    */
   },
 
   data() {
@@ -101,17 +92,6 @@ export default {
         this.inputTime = this.time
       }
     },
-
-    /*
-    async createPushNotification() {
-      console.log("create for " + this.content._id)
-      await axios.post(process.env.VUE_APP_API_SERVER_URL + "/setNotification", { external_id: this.user.sub, content: { id: this.content._id, name: this.content.name }, date: this.scheduledDate }).then(async (response) => {
-        console.log(response.data)
-      }).catch(() => {
-        console.error(error)
-      })
-    }
-    */
   },
 
   async created() {

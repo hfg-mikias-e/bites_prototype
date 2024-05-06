@@ -61,7 +61,6 @@ export default {
   methods: {
     returnComponent() {
       const comp = defineAsyncComponent(() => import(`@/components/content/${this.contentID + "/" + this.number}.vue`))
-      console.log(comp)
       return markRaw(comp)
     },
 
@@ -73,7 +72,6 @@ export default {
     touchEnd(touchEvent, posXStart) {
       const posXEnd = touchEvent.changedTouches[0].clientX;
 
-      console.log(posXStart, posXEnd)
       if (posXStart < (posXEnd - 25) && this.currentSlide > 0) {
         this.currentSlide = this.currentSlide - 1
       } else if (posXStart > (posXEnd + 25) && this.currentSlide < this.lastSlide - 1) {
@@ -84,7 +82,6 @@ export default {
     },
 
     stars(val) {
-      console.log(val)
       this.$emit("stars", val)
     }
   },
@@ -93,14 +90,11 @@ export default {
     let last = false
     while (!last) {
       await import(`@/components/content/${this.contentID}/${this.lastSlide + 1}.vue`).then((_res) => {
-        console.log("add")
         this.lastSlide = this.lastSlide + 1
       }).catch(() => {
         last = true
       })
     }
-
-    console.log("lastSlide: " + this.lastSlide)
     this.$emit("lastSlide", this.lastSlide)
 
     //await this.checkForLast()
