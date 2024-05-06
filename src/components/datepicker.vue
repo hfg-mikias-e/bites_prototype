@@ -42,24 +42,6 @@ export default {
     },
 
     methods: {
-        /*
-        updateValue(input) { // $event directly gets the element
-            function isValidDate(d) {
-                return d instanceof Date && !isNaN(d);
-            }
-
-            const newDate = DateTime.fromFormat(input.target.value, this.dateFormat).toJSDate()
-            if (isValidDate(newDate)) {
-                this.date = newDate
-            } else {
-                //setze Eingabe auf das letzte gültige Datum zurück
-                //this.inputDate = DateTime.fromJSDate(this.date).toFormat(this.dateFormat)
-                this.setInputFormat(DateTime.fromJSDate(this.date))
-                input.target.value = this.inputDate
-            }
-        },
-        */
-
         setInputFormat(dateObj) {
             const date = dateObj.setLocale('en-US').toRelativeCalendar()
             this.inputDate = date.charAt(0).toUpperCase() + date.substring(1)
@@ -76,25 +58,6 @@ export default {
 <style lang="scss">
 @use "variables" as v;
 
-/*
-#date-picker {
-    svg.calendar {
-        height: 1.4em;
-        position: absolute;
-        //left: v.$viewport-padding-horizontal;
-        transform: translate(0, -101%);
-        z-index: 1;
-        //border-right: 1px solid rgba(v.$text-color, 0.2);
-        //border-radius: 0;
-        padding: v.$viewport-padding-horizontal;
-        background-color: rgba(v.$text-color, 0.4);
-
-        path {
-            transform: translate(0, -5%);
-        }
-    }
-}
-*/
 .dp__menu {
     background-color: v.$content-color;
     border-radius: 1.5em;
@@ -103,9 +66,8 @@ export default {
 .dp--menu-wrapper {
     position: fixed;
     z-index: 100;
-    //transform: translate(calc(v.$viewport-padding-horizontal*0.5), calc(v.$viewport-padding-vertical + v.$content-padding - v.$viewport-padding-horizontal*0.5));
-    //width: calc(100vw - v.$viewport-padding-horizontal);
-    width: 100vw;
+    width: v.$viewport-width;
+    max-width: 430px;
     top: 100% !important;
     transform: translate(0, -100%);
     left: 0;

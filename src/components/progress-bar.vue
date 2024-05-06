@@ -38,12 +38,12 @@ export default {
 @use "variables" as v;
 
 #bar {
-  position: fixed;
-  width: calc(100% - 6*v.$viewport-padding-horizontal);
-  left: calc(3*v.$viewport-padding-horizontal);
-  top: 0.5em;
-  height: 0.4em;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
   gap: 0.25em;
+  padding: 0.6em 1.5em;
   justify-content: center;
 
   h5 {
@@ -54,11 +54,11 @@ export default {
     }
   }
 
-  div {
+  >div {
     background-color: rgba(v.$text-color, 0.1);
     transition: width 0.5s;
     max-width: 100%;
-    height: 100%;
+    height: 0.4em;
 
     &.done {
       background-color: rgba(v.$text-color, 0.25);
@@ -66,6 +66,7 @@ export default {
 
     >div {
       background-color: rgba(v.$text-color, 0.15);
+      height: 100%;
     }
   }
 }

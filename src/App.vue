@@ -1,36 +1,31 @@
 <template>
-  <Transition name="fade">
-    <div id="route" :class="{ navbar: showNavbar, space: stars }" v-if="!$store.state.firstTimeUse">
-      <router-view v-slot="{ Component, route }" mode="out-in">
-        <transition name="fade">
-          <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val" @stars="star => stars = star" @resetPrototype="onboardingSlides = true"/>
+  <TransitionGroup name="fade" mode="out-in">
+    <div id="route" :style="{ paddingTop: $route.name === 'Content' ? 0 : 'unset' }" :class="{ navbar: showNavbar, space: stars }" v-if="!$store.state.firstTimeUse">
+      <router-view v-slot="{ Component, route }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" :key="route.name" @showNavbar="val => showNavbar = val"
+            @stars="star => stars = star" @resetPrototype="onboardingSlides = true" />
         </transition>
       </router-view>
-      <!--
-      <Transition name="fade" appear>
-        <Navbar :disabled="!showNavbar" />
-      </Transition>
-      -->
     </div>
-  </Transition>
-
-  <Transition name="fade">
-    <div id="route" :class="{ space: stars }" v-if="$store.state.firstTimeUse">
+    <div id="onboarding" :class="{ space: stars }" v-else>
       <Transition name="fade">
         <ProgressBar v-if="onboardingSlides" :currentSlide="currentSlide" :slideNumber="lastSlide"
           :contentDone="!onboardingSlides" />
       </Transition>
       <Slides v-if="onboardingSlides" contentID="onboarding" :number="currentSlide + 1"
         @lastSlide="last => lastSlide = last" @currentSlide="current => currentSlide = current"
-        @contentDone="onboardingSlides = false" @stars="star => stars = star" @colors="color => colors = color"/>
-      <div v-else>
+        @contentDone="onboardingSlides = false" @stars="star => stars = star" @colors="color => colors = color" />
+      <div id="welcome" v-else>
         <h1>Welcome on board, {{ $store.state.username }}!</h1>
-        <Button class="primary complete" @click="completeOnboarding">Let's get started!</Button>
+        <Button class="primary" @click="completeOnboarding">Let's get started!</Button>
       </div>
 
-      <SlideOut :open="prompt" :persist="true" @close-slideout="prompt = false">
+      <SlideOut :open="prompt !== null" :persist="true" @close-slideout="prompt = null">
         <div id="info">
-          <h3>Install and access this App directly from the Home screen of your phone for the best experience!</h3>
+          <h3>Install and access this App directly from the Home screen of your phone for the best experience, such as receiving Notifications for your saved content!</h3>
+          <Button class="primary" @click="install">Install Bites</Button>
+        <!--
           <div class="row">
             <p>1. Tap on</p>
             <div id="action">
@@ -43,10 +38,11 @@
             <div id="action">Add to Home Screen</div>
           </div>
           <b>3. Open {{ title }} over your freshly installed App!</b>
+        -->
         </div>
       </SlideOut>
     </div>
-  </Transition>
+  </TransitionGroup>
 
   <!-- Not subscribed -->
   <SlideOut :open="!$store.state.subscribed && !onboardingSlides">
@@ -58,7 +54,8 @@
       </template>
       <template v-if="permission === 'granted'">
         <h2>You've allowed Push-Notifications!</h2>
-        <p>Please be aware that receiving push notifications on your mobile device might not take effect until you restart
+        <p>Please be aware that receiving push notifications on your mobile device might not take effect until you
+          restart
           the app.</p>
       </template>
       <template v-if="permission === 'denied'">
@@ -75,159 +72,190 @@
 </template>
 
 <script>
-import Navbar from '@/components/navbar.vue'
-import Slides from '@/components/slides.vue'
-import Button from '@/components/button.vue'
-import Image from '@/components/image.vue'
-import ProgressBar from '@/components/progress-bar.vue';
-import SlideOut from '@/components/slide-out.vue'
-import { title } from '@/assets/data/names.js'
+  import Navbar from '@/components/navbar.vue'
+  import Slides from '@/components/slides.vue'
+  import Button from '@/components/button.vue'
+  import Image from '@/components/image.vue'
+  import ProgressBar from '@/components/progress-bar.vue';
+  import SlideOut from '@/components/slide-out.vue'
+  import { title } from '@/assets/data/names.js'
 
-export default {
-  name: 'App',
+  export default {
+    name: 'App',
 
-  components: {
-    ProgressBar,
-    Slides,
-    Navbar,
-    Button,
-    SlideOut,
-    Image
-  },
-
-  data() {
-    return {
-      title: title,
-      permission: "default",
-      prompt: false,
-
-      stars: false,
-      showNavbar: false,
-
-      onboardingSlides: true,
-      currentSlide: 0,
-      lastSlide: 0
-    };
-  },
-
-  computed: {
-    isAuthenticated() {
-      return this.$store.state.username !== ""
-    }
-  },
-
-  methods: {
-    async completeOnboarding() {
-      await this.$store.dispatch('setOnboarding', false)
+    components: {
+      ProgressBar,
+      Slides,
+      Navbar,
+      Button,
+      SlideOut,
+      Image
     },
 
-    subscribeUser() {
-      this.$OneSignal.User.PushSubscription.optIn().then(async() => {
-        this.permission = Notification.permission
-        await this.$store.dispatch("setID", this.$OneSignal.User.PushSubscription.id)
-        this.$OneSignal.login(this.$store.state.accountID)
-      });
-    },
-    setSubscription(subscribed) {
-      this.$store.dispatch("setSubscription", subscribed);
-    }
-  },
+    data() {
+      return {
+        title: title,
+        permission: "default",
+        prompt: null,
 
-  watch: {
-    async $route() {
-      if (this.$route.name !== "Onboarding") {
-        this.showNavbar = true
+        stars: false,
+        showNavbar: false,
+
+        onboardingSlides: true,
+        currentSlide: 0,
+        lastSlide: 0
+      };
+    },
+
+    computed: {
+      isAuthenticated() {
+        return this.$store.state.username !== ""
       }
-    }
-  },
+    },
 
-  mounted() {
-    setTimeout(() => {
-      this.prompt = true
-    }, 500)
-  },
-}
+    methods: {
+      async completeOnboarding() {
+        await this.$store.dispatch('setOnboarding', false)
+      },
+
+      async install() {
+        if (this.promt !== null) {
+          console.log(this.prompt)
+          this.prompt.prompt();
+        }
+      },
+
+      subscribeUser() {
+        this.$OneSignal.User.PushSubscription.optIn().then(async () => {
+          this.permission = Notification.permission
+          await this.$store.dispatch("setID", this.$OneSignal.User.PushSubscription.id)
+          this.$OneSignal.login(this.$store.state.accountID)
+        });
+      },
+      setSubscription(subscribed) {
+        this.$store.dispatch("setSubscription", subscribed);
+      }
+    },
+
+    watch: {
+      async $route() {
+        if (this.$route.name !== "Onboarding") {
+          this.showNavbar = true
+        }
+      }
+    },
+
+    mounted() {
+      window.addEventListener("beforeinstallprompt", e => {
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        this.prompt = e;
+      });
+      window.addEventListener("appinstalled", () => {
+        this.prompt = null;
+        alert("this is installed already")
+      });
+
+      /*
+      setTimeout(() => {
+        this.prompt = true
+      }, 500)
+      */
+    },
+  }
 </script>
 
 <style lang="scss">
-@use "variables" as v;
-@import "./style.scss";
+  @use "variables" as v;
+  @import "./style.scss";
 
-#route {
-  width: 100%;
-  height: 100%;
-  flex-grow: 1;
-  padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
-  overflow: scroll;
-  overflow-x: hidden;
-  border-radius: 0;
-
-  /*
-  &.navbar {
-    padding-bottom: calc(v.$navbar-height + v.$viewport-padding-vertical + v.$content-gap);
-  }
-  */
-
-  &.space {
-    background-image: url('../public/img/stars.png');
-    background-repeat: no-repeat;
-    background-position: 50% 0;
-    background-size: cover;
-  }
-
-  >div {
+  #route {
+    width: 100%;
+    height: 100%;
     flex-grow: 1;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-radius: 0;
+
+    &.space {
+      background-image: url('../public/img/stars.png');
+      background-repeat: no-repeat;
+      background-position: 50% 0;
+      background-size: cover;
+    }
+
+    >div:not(#bar) {
+      flex-grow: 1;
+    }
   }
 
   #info {
-    gap: 1em;
-    padding: 1em 0;
+      gap: 1em;
+      padding: 1em 0;
 
-    h3 {
-      margin-bottom: 1em;
+      h3 {
+        margin-bottom: 1em;
+      }
+
+      p {
+        font-weight: 500;
+      }
+
+      #action {
+        padding: 0.25em 0.5em;
+        background-color: rgba(v.$text-color, 0.2);
+        border-radius: 0.5em;
+        width: fit-content;
+        font-weight: 500;
+      }
+
+      .row {
+        gap: 0.75em;
+      }
+
+      img {
+        background: none;
+        width: 1.5em;
+      }
     }
 
-    p {
-      font-weight: 500;
+  #onboarding {
+    padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
+    height: 100%;
+
+    #slide {
+      border: 1px solid red;
+      height: 100%;
     }
 
-    #action {
-      padding: 0.25em 0.5em;
-      background-color: rgba(v.$text-color, 0.2);
-      border-radius: 0.5em;
-      width: fit-content;
-      font-weight: 500;
-    }
+    #welcome {
+      gap: v.$content-gap;
+      align-items: center;
 
-    .row {
-      gap: 0.75em;
-    }
-
-    img {
-      background: none;
-      width: 1.5em;
+      button {
+        width: 100%;
+      }
     }
   }
-}
 
-#startBite {
-  button {
-    width: 100%;
+  #startBite {
+    button {
+      width: 100%;
+    }
   }
-}
 
-.prompt-enter-from,
-.prompt-leave-to {
-  transform: translateY(100%);
-}
+  .prompt-enter-from,
+  .prompt-leave-to {
+    transform: translateY(100%);
+  }
 
-.prompt-enter-active,
-.prompt-leave-active {
-  transition-property: transform;
-  transition-duration: 0.2s;
-}
+  .prompt-enter-active,
+  .prompt-leave-active {
+    transition-property: transform;
+    transition-duration: 0.2s;
+  }
 
-.prompt-enter-active {
-  transition-delay: 0.2s;
-}
+  .prompt-enter-active {
+    transition-delay: 0.2s;
+  }
 </style>

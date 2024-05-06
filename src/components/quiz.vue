@@ -86,11 +86,12 @@ export default {
 #quiz {
   gap: v.$content-gap;
   height: 100%;
+  padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
   padding-top: 25%;
 
   #actionButtons {
-    position: absolute;
-    bottom: 0;
+    flex-grow: 1;
+    align-items: flex-end;
   }
 }
 

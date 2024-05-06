@@ -2,7 +2,7 @@
     <video id="iframe" controls loop style="width: 100%;">
         <source src="/media/Massively Transformative Purpose (MTP).mp4" type="video/mp4">
     </video>
-    <Button class="primary complete" @click="$emit('contentDone')">Done</Button>
+    <Button class="primary" @click="$emit('contentDone')">Done</Button>
 </template>
 
 <script>

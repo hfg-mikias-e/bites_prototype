@@ -25,11 +25,6 @@
             </h4>
         </div>
     </div>
-
-    <!--
-    <div style="border-radius: 0; background: linear-gradient(168deg, #284852 0%, #070710 75%); position: fixed; width: 100vw;
-    height: 100vh; left: 0; top: 0; z-index: -1;"></div>
-    -->
 </template>
 
 <script>

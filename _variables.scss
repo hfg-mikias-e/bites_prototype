@@ -1,19 +1,30 @@
 $background-color: #151517;
-$content-color: #2C2C2E;
-$text-color: #FFFFFF;
+$content-color: #2c2c2e;
+$text-color: #ffffff;
 
-$primary-color: #D3CAFA;
+$primary-color: #d3cafa;
 $secondary-color: #ffffff;
 $tertiary-color: #000000;
-$success-color: #B8F8D6;
+$success-color: #b8f8d6;
 
-$category-65786415b5cab38bd49c4ea0: #98DDF2;
-$category-65786453b5cab38bd49c4ea3: #F0B5E9;
-$category-6578643ab5cab38bd49c4ea1: #F3E49A;
+$category-65786415b5cab38bd49c4ea0: #98ddf2;
+$category-65786453b5cab38bd49c4ea3: #f0b5e9;
+$category-6578643ab5cab38bd49c4ea1: #f3e49a;
 
-$viewport-padding-horizontal: 4vw;
-$viewport-padding-vertical: calc($viewport-padding-horizontal*2);
-$content-padding: calc($viewport-padding-horizontal*1.5);
+$viewport-width: 100vw;
+
+@media (orientation: landscape) {
+  $viewport-width: 100% !global;
+}
+
+$viewport-padding-horizontal: calc($viewport-width * 0.04);
+$viewport-padding-vertical: calc($viewport-padding-horizontal * 2);
+$content-padding: calc($viewport-padding-horizontal * 1.5);
 
 $content-gap: 3vh;
 $navbar-height: 20vw;
+
+@media (orientation: landscape) {
+  $content-gap: calc(3vh*0.85) !global;
+  $navbar-height: 20% !global;
+}

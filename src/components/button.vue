@@ -21,13 +21,12 @@ export default {
 @use 'variables' as v;
 
 button {
-    width: fit-content;
     border-radius: 0.75em;
     pointer-events:auto;
     box-sizing: border-box;
     display: flex;
-    height: 3.2em;
-    min-width: 3.2em;
+    height: 3em;
+    min-width: 3em;
     justify-content: center;
     align-items: center;
     line-height: 120%;
@@ -57,12 +56,10 @@ button {
     }
 
     &.button {
-        height: 3.2em;
         min-width: 3.2em;
     }
 
     &.primary, &.secondary {
-        height: 3.2em;
         min-width: 3.2em;
     }
 
@@ -83,13 +80,6 @@ button {
         * {
             color: v.$primary-color;
         }
-    }
-
-    &.complete {
-        align-self: center;
-        position: absolute;
-        bottom: 1.5em;
-        width: calc(100% - 3em);
     }
 }
 </style>

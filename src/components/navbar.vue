@@ -43,7 +43,7 @@ export default {
 @use "variables" as v;
 
 #shadow {
-  position: fixed;
+  position: absolute;
   border-radius: 0;
   bottom: 0;
   left: 0;

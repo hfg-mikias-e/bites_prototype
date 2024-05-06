@@ -56,14 +56,13 @@ export default {
 @use "variables" as v;
 
 #bottom-sheet {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   background-color: v.$content-color;
   color: v.$text-color;
   z-index: 10;
   width: 100%;
-  //max-height: 50vh;
   padding: v.$viewport-padding-vertical v.$content-padding;
   border-radius: 1.5em;
   transition: all 0.4s ease-in-out;
@@ -75,7 +74,7 @@ export default {
     top: 0.4em;
     left: 50%;
     transform: translate(-50%, -25%);
-    height: 10vh;
+    height: 10%;
     width: 100vw;
     justify-content: center;
     align-items: center;

@@ -170,10 +170,9 @@ export default {
     color: v.$background-color;
   }
 
-  position: fixed;
+  position: absolute;
   left: 0;
   top: 0;
-  width: 100vw;
   height: 100%;
   border-radius: 0;
   background-color: v.$primary-color;

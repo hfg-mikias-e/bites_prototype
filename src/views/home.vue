@@ -224,7 +224,7 @@ export default {
 
 #home {
   gap: 2em;
-  //padding: 0 v.$viewport-padding-horizontal;
+  padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
 
   >div {
     gap: 1em;

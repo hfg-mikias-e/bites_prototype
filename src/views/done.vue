@@ -256,6 +256,7 @@ export default {
 @use "variables" as v;
 
 #done {
+  padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
   height: 100%;
   justify-content: space-between;
   align-items: center;
@@ -266,7 +267,7 @@ export default {
 
   >#note {
     gap: 0;
-    top: calc(15% + 5vh);
+    top: calc(15% + 5%);
     right: 30%;
 
     img {
@@ -344,12 +345,12 @@ h2 {
 }
 
 #bottomBox {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
 
   #dialog {
-    position: fixed;
+    position: absolute;
     bottom: calc(v.$viewport-padding-vertical + 5.5em);
     gap: 0.5em;
     width: calc(100vw - 2*v.$viewport-padding-horizontal);

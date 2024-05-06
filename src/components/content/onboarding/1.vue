@@ -4,7 +4,7 @@
         </span><br />Your Place for learning
         <span id="accent">Future Skills</span> on the go
     </h1>
-    <Image style="background: none; max-width: unset; width: 120vw; transform: translate(-20vw)"
+    <Image style="background: none; max-width: unset; width: 120%; transform: translate(-8.5%)"
         src="/img/cookieverse.png" />
     <div id="note" style="opacity: 1; right: 0; bottom: 5%;">
         <h2 style="transform: rotate(-12deg);">swipe to take a<br/>look at all skills!</h2>

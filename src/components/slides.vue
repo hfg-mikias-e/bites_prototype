@@ -122,10 +122,10 @@ export default {
     padding: 20% 1.5em;
     background-color: v.$content-color;
     border-radius: 2.5em;
-    position: fixed;
+    position: absolute;
     top: 2em;
     left: 0.5em;
-    width: calc(100vw - 1em);
+    width: calc(100% - 1em);
     height: calc(100% - 3.75em);
   }
 

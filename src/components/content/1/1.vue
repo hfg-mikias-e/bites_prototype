@@ -2,7 +2,7 @@
     <div id="iframe" style="height: calc(100% - 2.5em)">
         <iframe src="https://pomofocus.io/"/>
     </div>
-    <Button class="primary complete" @click="$emit('contentDone')">Done</Button>
+    <Button class="primary" @click="$emit('contentDone')">Done</Button>
 </template>
 
 <script>

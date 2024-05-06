@@ -4,7 +4,7 @@
         <source src="/media/breathing.mov" type="video/mp4">
     </video>
     </div>
-    <Button class="complete" @click="$emit('contentDone')">Done</Button>
+    <Button @click="$emit('contentDone')">Done</Button>
 </template>
 
 <script>
