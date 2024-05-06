@@ -22,7 +22,7 @@
         <Button class="primary" @click="completeOnboarding">Let's get started!</Button>
       </div>
 
-      <SlideOut :open="prompt !== null || !standaloneMode" :persist="true" @close-slideout="prompt = null">
+      <SlideOut :open="prompt !== null || !standaloneMode" :persist="true" @close-slideout="prompt = null, standaloneMode = true">
         <div id="info">
           <h3>Install and access this App directly from the Home screen of your phone for the best experience, such as
             receiving Notifications for your saved content!</h3>
@@ -203,7 +203,6 @@
     height: 100%;
 
     #slide {
-      border: 1px solid red;
       height: 100%;
     }
 

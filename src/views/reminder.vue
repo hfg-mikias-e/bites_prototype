@@ -127,7 +127,7 @@ export default {
 #reminder {
   gap: 2em;
   justify-content: space-between;
-  //padding: 0 v.$viewport-padding-horizontal;
+  padding: v.$viewport-padding-vertical v.$viewport-padding-horizontal;
 
   h5 {
     font-weight: bold;
