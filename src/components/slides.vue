@@ -1,6 +1,6 @@
 <template>
   <transition :name="direction ? 'slide-fade' : 'slide-fade-reverse'">
-    <div v-if="!transition" id="slide" @touchstart="touchStartMethod" :class="{card: $route.name === 'Content'}">
+    <div v-if="!transition" id="slide" @touchstart="touchMethod" @mousedown="clickMethod" :class="{card: $route.name === 'Content'}">
       <component :is="component" @contentDone="$emit('contentDone')" @stars="stars"/>
       <Transition name="fade">
         <div id="note"
@@ -64,13 +64,24 @@ export default {
       return markRaw(comp)
     },
 
-    touchStartMethod(touchEvent) {
-      const posXStart = touchEvent.changedTouches[0].clientX;
-      addEventListener('touchend', (touchEvent) => this.touchEnd(touchEvent, posXStart), { once: true });
+    clickMethod(clickEvent) {
+      const posXStart = clickEvent.clientX;
+      addEventListener('mouseup', (clickEvent) => this.swipeEnd(clickEvent, posXStart, "click"), { once: true });
     },
 
-    touchEnd(touchEvent, posXStart) {
-      const posXEnd = touchEvent.changedTouches[0].clientX;
+    touchMethod(touchEvent) {
+      const posXStart = touchEvent.changedTouches[0].clientX;
+      addEventListener('touchend', (touchEvent) => this.swipeEnd(touchEvent, posXStart, "touch"), { once: true });
+    },
+
+    swipeEnd(event, posXStart, eventType) {
+      let posXEnd;
+
+      if(eventType == "click") {
+        posXEnd = event.clientX;
+      } else {
+        posXEnd = event.changedTouches[0].clientX;
+      }
 
       if (posXStart < (posXEnd - 25) && this.currentSlide > 0) {
         this.currentSlide = this.currentSlide - 1
@@ -139,7 +150,7 @@ export default {
   }
 
   img {
-    max-width: 50vw;
+    max-width: 50%;
     margin: 0 auto;
   }
 

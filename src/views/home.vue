@@ -339,7 +339,7 @@ export default {
 
   >div {
     left: -(v.$viewport-padding-horizontal);
-    width: calc(100vw - 2*(v.$viewport-padding-horizontal));
+    width: calc(100% - 2*(v.$viewport-padding-horizontal));
   }
 }
 </style>

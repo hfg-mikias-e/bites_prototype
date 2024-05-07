@@ -353,7 +353,7 @@ h2 {
     position: absolute;
     bottom: calc(v.$viewport-padding-vertical + 5.5em);
     gap: 0.5em;
-    width: calc(100vw - 2*v.$viewport-padding-horizontal);
+    width: calc(100% - 2*v.$viewport-padding-horizontal);
   }
 
   #bite-container {

@@ -66,7 +66,7 @@ export default {
     text-decoration: none;
     display: flex;
     font-size: 1em;
-    border-radius: 100vw;
+    border-radius: 100%;
     color: v.$text-color;
     background: none; //v.$background-color;
     padding: 0;

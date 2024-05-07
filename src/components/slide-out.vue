@@ -2,7 +2,7 @@
   <transition name="bottom-sheet">
     <div id="bottom-sheet" v-if="open">
       <Transition name="fade">
-        <div id="touch-area" v-if="persist" @touchstart="touchStartMethod">
+        <div id="touch-area" v-if="persist" @touchstart="touchMethod" @mousedown="clickMethod">
           <div></div>
         </div>
       </Transition>
@@ -30,13 +30,26 @@ export default {
   },
 
   methods: {
-    touchStartMethod(touchEvent) {
+    touchMethod(touchEvent) {
       const posYStart = touchEvent.changedTouches[0].clientY;
       addEventListener('touchend', (touchEvent) => this.touchEnd(touchEvent, posYStart), { once: true });
     },
 
     touchEnd(touchEvent, posYStart) {
       const posYEnd = touchEvent.changedTouches[0].clientY;
+
+      if (posYStart < (posYEnd - 25)) {
+        this.$emit("close-slideout")
+      }
+    },
+
+    clickMethod(clickEvent) {
+      const posYStart = clickEvent.clientY;
+      addEventListener('mouseup', (clickEvent) => this.clickEnd(clickEvent, posYStart), { once: true });
+    },
+
+    clickEnd(clickEvent, posYStart) {
+      const posYEnd = clickEvent.clientY
 
       if (posYStart < (posYEnd - 25)) {
         this.$emit("close-slideout")
@@ -75,7 +88,7 @@ export default {
     left: 50%;
     transform: translate(-50%, -25%);
     height: 10%;
-    width: 100vw;
+    width: 100%;
     justify-content: center;
     align-items: center;
 
