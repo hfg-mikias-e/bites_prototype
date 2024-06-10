@@ -77,6 +77,7 @@
   import ProgressBar from '@/components/progress-bar.vue';
   import SlideOut from '@/components/slide-out.vue'
   import { title } from '@/assets/data/names.js'
+  import axios from 'axios';
 
   export default {
     name: 'App',
