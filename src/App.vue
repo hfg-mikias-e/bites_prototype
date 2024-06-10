@@ -30,9 +30,8 @@
           <Button v-if="installPossible" class="primary" @click="install">Install Bites</Button>
           <template v-else>
             <div class="row">
-              <p>1. Tap the <span class="action">share option</span> (
-                <Image src="/img/share-icon.png" />) in your browser and select <span class="action">"Add to Home
-                  Screen"</span>!
+              <p>1. Tap the share option (
+                <Image src="/img/share-icon.png" />) in your browser and select "Add to Home Screen"!
               </p>
             </div>
             <p>2. Open {{ title }} over your freshly installed App!</p>
