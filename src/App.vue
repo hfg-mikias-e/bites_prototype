@@ -22,14 +22,18 @@
         <Button class="primary" @click="completeOnboarding">Let's get started!</Button>
       </div>
 
-      <SlideOut :open="prompt !== null || !standaloneMode" :persist="true" @close-slideout="prompt = null, standaloneMode = true">
+      <SlideOut :open="prompt !== null || !standaloneMode" :persist="true"
+        @close-slideout="prompt = null, standaloneMode = true">
         <div id="info">
           <h3>Install and access this App directly from the Home screen of your phone for the best experience, such as
             receiving Notifications for your saved content!</h3>
           <Button v-if="installPossible" class="primary" @click="install">Install Bites</Button>
           <template v-else>
             <div class="row">
-              <p>1. Tap the <span class="action">share option</span> (<Image src="/img/share-icon.png" />) in your browser and select <span class="action">"Add to Home Screen"</span>!</p>
+              <p>1. Tap the <span class="action">share option</span> (
+                <Image src="/img/share-icon.png" />) in your browser and select <span class="action">"Add to Home
+                  Screen"</span>!
+              </p>
             </div>
             <p>2. Open {{ title }} over your freshly installed App!</p>
           </template>
@@ -129,6 +133,12 @@
       },
       setSubscription(subscribed) {
         this.$store.dispatch("setSubscription", subscribed);
+      },
+
+      pingServer() {
+        axios.get(process.env.VUE_APP_API_SERVER_URL + "/").then((response) => {
+          console.log("ping server: " + response.data)
+        })
       }
     },
 
@@ -152,9 +162,15 @@
         this.prompt = null
       })
 
-      if(!this.installPossible) {
+      if (!this.installPossible) {
         this.standaloneMode = ('standalone' in window.navigator) && window.navigator.standalone
       }
+
+      // backend heartbeat
+      this.pingServer()
+      setInterval(() => {
+        this.pingServer()
+      }, 600000)
     },
   }
 </script>
